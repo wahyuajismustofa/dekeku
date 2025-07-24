@@ -93,6 +93,7 @@ function setupEventQtySelector(keranjang) {
         keranjang[index].jumlah = newQty;
         localStorage.setItem("keranjang", JSON.stringify(keranjang));
         setupKeranjang();
+        updateCartBadge();
       }
     });
   });
@@ -103,6 +104,7 @@ function hapusItem(index) {
   keranjang.splice(index, 1);
   localStorage.setItem("keranjang", JSON.stringify(keranjang));
   setupKeranjang();
+  updateCartBadge();
 }
 
 // ✅ Event tombol proses pesanan
@@ -114,14 +116,14 @@ function setupTombolPesan() {
 }
 
 // ✅ Kirim detail pesanan ke WhatsApp
-function kirimPesananKeWhatsApp() {
+async function kirimPesananKeWhatsApp() {
   if (keranjang.length === 0) {
     alert("Keranjang masih kosong!");
     return;
   }
 
   let pesan = `*DETAIL PESANAN ANDA:*\n____________________________\n`;
-
+  let payLink ='';
   let total = 0;
   keranjang.forEach((item, i) => {
     const subtotal = item.harga * item.jumlah;
@@ -147,10 +149,35 @@ function kirimPesananKeWhatsApp() {
     pesan += `• ${item.link_produk}\n____________________________\n`;
   });
 
-  pesan += `*TOTAL: Rp${total.toLocaleString()}*\n\n`;
-  pesan += "_Silakan konfirmasi untuk melanjutkan proses pemesanan. Terima kasih!_";
+  payLink = await getPayLink(total);
+  pesan += `*TOTAL: Rp${total.toLocaleString()}*\n`;
+  pesan += `*Link Pembayaran:* ${payLink}\n\n`;
+
+  pesan += "_Silakan konfirmasi pembayaran untuk melanjutkan proses pemesanan. Terima kasih!_";
 
   const encoded = encodeURIComponent(pesan);
   const waLink = `https://wa.me/${waAdmin}?text=${encoded}`;
   window.open(waLink, "_blank");
+}
+
+async function getPayLink(harga) {
+  try {
+    const res = await fetch("https://midtrans-worker.wahyuajismustofa333.workers.dev/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ harga })
+    });
+
+    const data = await res.json();
+
+    if (data.snap_url) {
+      return data.snap_url
+    } else {
+      console.log("Gagal membuat pembayaran: " + (data.error || "Unknown error"));
+    }
+  } catch (err) {
+    console.log("Terjadi kesalahan: " + err.message);
+  }
 }
