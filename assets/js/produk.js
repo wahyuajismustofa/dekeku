@@ -2,11 +2,26 @@
 // Oleh             : Wahyu Ajis Mustofa
 // Update Terakhir  : Selasa, 22 Juli 2025
 
-// ===================================================================
-// INISIALISASI
-// ===================================================================
-let devMode = false; // Set true untuk mode pengembangan
 
+// ===================================================================
+// IMPORT MODUL
+// ===================================================================
+
+// ===================================================================
+// DEV Option
+// ===================================================================
+function isLocalhost() {
+  const host = window.location.hostname;
+  return (
+    host === "localhost" ||
+    host === "127.0.0.1" ||
+    host === "::1" ||
+    // untuk alamat IP lokal (misal 192.168.x.x atau 10.x.x.x)
+    /^192\.168\.\d{1,3}\.\d{1,3}$/.test(host) ||
+    /^10\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(host)
+  );
+}
+let devMode = isLocalhost();
 
 // ===================================================================
 // PRODUK HANDLER
@@ -17,17 +32,23 @@ let dataProduk = [];
 let dataProdukShow = {};
 let dataProdukUpdate = {};
 let filters = {};
+let urlProduk = '';
 
-const urlProduk = "/assets/data/produk2.json";
+if (devMode){
+  urlProduk = "/assets/data/produkDev.json";
+}else{
+  urlProduk = "/assets/data/produk.json";
+}
 const idProdukContainer = 'daftar-produk';
 const idFilterContainer = 'filter-produk';
 const keyFilterProduk = ['kategori','acara','tema']; // contoh : ['nama','kategori']
 let PRODUK_PER_HALAMAN = 10;
 
-
 async function initProduk() {
   await getDataProduk();
-//   WAM.cekSync(dataProdukUpdate);
+}
+async function renderProdukdanFilter(){
+  await getDataProduk();
   filters = readURLParams();
   updateDataProdukShow();
   renderFilters(dataProduk, idFilterContainer, keyFilterProduk);
@@ -44,6 +65,7 @@ async function getDataProduk() {
   dataProduk = enrichProduk(dataProduk,dataKategori,dataPaket);
   dataProdukUpdate.nama = "produk";
   dataProdukUpdate.updated = data.updated;
+  window.dataProdukUpdate = dataProdukUpdate;
   delete data.updated;
 }
 
@@ -377,7 +399,37 @@ function openBuyModal(produk) {
       `);
     });
   }
+
   $modal.modal('show');
+}
+
+function resetBuyModal() {
+  const $modal = $('#buyModal');
+
+  // Saat modal disembunyikan, bersihkan isinya
+  $modal.on('hidden.bs.modal', function () {
+    $('#buyModalLabel').empty();
+    $('#buyModalBody').empty();
+  });
+
+  // Hilangkan fokus dari elemen aktif, lalu tutup modal
+  document.activeElement.blur();
+  $modal.modal('hide');
+}
+
+function resetModal(modalEl, elementsToClear = []) {
+  const $modal = $(modalEl);
+
+  // Hapus listener lama untuk mencegah duplikasi
+  $modal.off('hidden.bs.modal').on('hidden.bs.modal', function () {
+    elementsToClear.forEach(selector => {
+      $(selector).empty();
+    });
+  });
+
+  // Hilangkan fokus & tutup modal
+  document.activeElement.blur();
+  $modal.modal('hide');
 }
 
 
@@ -393,17 +445,5 @@ function submitBuyModal(e) {
   addToCart(produkDipilih);
   updateCartBadge();
   // Bersihkan setelah modal tertutup
-  $('#buyModal').on('hidden.bs.modal', function () {
-    $('#buyModalLabel').empty();
-    $('#buyModalBody').empty();
-  });
-  document.activeElement.blur();
-  $('#buyModal').modal('hide');
+  resetModal('#buyModal',['#buyModalLabel','#buyModalBody']);
 }
-
-// ===================================================
-// EVENT HANDLER
-// ===================================================
-document.addEventListener("DOMContentLoaded", function () {
-  initProduk();
-});

@@ -79,6 +79,23 @@
     };
   }
 
+  
+function waitForVariable(name, timeout = 5000) {
+  return new Promise((resolve, reject) => {
+    const start = Date.now();
+    const interval = setInterval(() => {
+      const value = window[name];
+      if (value && Object.keys(value).length > 0) {
+        clearInterval(interval);
+        resolve(value);
+      } else if (Date.now() - start > timeout) {
+        clearInterval(interval);
+        reject(new Error(`${name} tidak tersedia dalam ${timeout}ms`));
+      }
+    }, 100);
+  });
+}
+
   const utils = {
     showAlert,
     sleep,
@@ -86,6 +103,7 @@
     formatDate,
     getFormData,
     debounce,
+    waitForVariable,
   };
 
   // Simpan sebagai utils
