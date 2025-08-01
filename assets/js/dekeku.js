@@ -26,8 +26,8 @@ function isDevelopmentMode() {
       console.warn("Properti 'repository' tidak ditemukan dalam config.json");
       showAlert("Konfigurasi tidak lengkap. Hubungi Admin.", "error");
     }
-
     _dekeku.repo = data.repository;
+    gtag();
 
   } catch (err) {
     console.error("Gagal mengambil konfigurasi:", err);
@@ -41,7 +41,6 @@ if (isDevelopmentMode()) {
 } else {
   console.log("Yatta!..🚀");
   _dekeku.urlApi = "https://api.dekeku.my.id";
-  gtag();
 }
 
 async function initDekeku() {
