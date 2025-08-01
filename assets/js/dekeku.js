@@ -21,6 +21,7 @@ if (isDevelopmentMode()) {
 async function initDekeku() {
   showLoader();
   if (typeof _dekeku.accessPage !== 'undefined'){checkAccess(_dekeku.accessPage)}
+  _dekeku.repo = {};
   _dekeku.repo = await initConfig();
   bindDataAttributes();
 
@@ -50,7 +51,7 @@ async function initDekeku() {
 }
 
 async function initConfig (){
-  const config = await fetch(`${location.origin}/config.json`);
+  const config = await fetch('/config.json');
   if (!config.ok) {
     console.error('Repository Belum dikonfigurasi');
     showAlert("Repository Belum dikonfigurasi Silahkan Hubungi Admin", "error");
