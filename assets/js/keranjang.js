@@ -6,18 +6,40 @@ document.addEventListener("DOMContentLoaded", function () {
   setupTombolPesan();
 });
 function setupKeranjang(){
-    keranjang = getLS('keranjang');
+    keranjang = getLSJson('keranjang');
     tampilkanKeranjang(keranjang);
     setupEventQtySelector(keranjang);
 }
 
 
-function getLS(item) {
+function getLSJson(item) {
   const data = localStorage.getItem(item);
   return data ? JSON.parse(data) : [];
 }
 
-// ✅ Tampilkan isi keranjang ke dalam DOM
+function addLSJson(nama, json) {
+  let data = [];
+
+  // Coba ambil data sebelumnya
+  try {
+    const tersimpan = localStorage.getItem(nama);
+    if (tersimpan) {
+      data = JSON.parse(tersimpan);
+      
+      if (!Array.isArray(data)) {
+        console.warn(`Data di '${nama}' bukan array. Akan ditimpa sebagai array.`);
+        data = [];
+      }
+    }
+  } catch (e) {
+    console.warn(`Gagal parse data dari localStorage key '${nama}':`, e);
+  }
+  
+  data.push(json);
+
+  localStorage.setItem(nama, JSON.stringify(data));
+}
+
 function tampilkanKeranjang(keranjang) {
   const cartItemEl = document.getElementById("cartItem");
   const summaryCartEl = document.getElementById("summaryCart");
@@ -148,11 +170,23 @@ async function kirimPesananKeWhatsApp() {
     pesan += `• Subtotal: Rp${subtotal.toLocaleString()}\n`;
     pesan += `• ${item.link_produk}\n____________________________\n`;
   });
-
-  payLink = await getPayLink(total);
   pesan += `*TOTAL: Rp${total.toLocaleString()}*\n`;
-  pesan += `*Link Pembayaran:* ${payLink}\n\n`;
 
+  order = await getPayLink(total);
+
+  addLSJson("order", {
+    order_id: order.order_id,
+    snap_url: order.snap_url,
+    items: keranjang,
+    total: total,
+    status: "pending",
+    waktu: new Date().toISOString()
+  });
+
+  keranjang = [];
+  localStorage.removeItem("keranjang");
+
+  pesan += `*Link Pembayaran:* ${order.snap_url}\n\n`;
   pesan += "_Silakan konfirmasi pembayaran untuk melanjutkan proses pemesanan. Terima kasih!_";
 
   const encoded = encodeURIComponent(pesan);
@@ -162,7 +196,7 @@ async function kirimPesananKeWhatsApp() {
 
 async function getPayLink(harga) {
   try {
-    const res = await fetch("https://midtrans-worker.wahyuajismustofa333.workers.dev/", {
+    const res = await fetch("https://midtrans-worker.wahyuajismustofa333.workers.dev/sandbox-transaksi", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -173,7 +207,7 @@ async function getPayLink(harga) {
     const data = await res.json();
 
     if (data.snap_url) {
-      return data.snap_url
+      return data
     } else {
       console.log("Gagal membuat pembayaran: " + (data.error || "Unknown error"));
     }

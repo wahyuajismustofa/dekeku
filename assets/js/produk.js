@@ -403,19 +403,6 @@ function openBuyModal(produk) {
   $modal.modal('show');
 }
 
-function resetBuyModal() {
-  const $modal = $('#buyModal');
-
-  // Saat modal disembunyikan, bersihkan isinya
-  $modal.on('hidden.bs.modal', function () {
-    $('#buyModalLabel').empty();
-    $('#buyModalBody').empty();
-  });
-
-  // Hilangkan fokus dari elemen aktif, lalu tutup modal
-  document.activeElement.blur();
-  $modal.modal('hide');
-}
 
 function resetModal(modalEl, elementsToClear = []) {
   const $modal = $(modalEl);
