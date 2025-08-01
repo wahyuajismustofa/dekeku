@@ -52,8 +52,11 @@ async function initDekeku() {
 
 async function initConfig() {
   try {
-    const res = await fetch(`${location.origin}/config.json`, {
-      cache: "no-cache"
+    const res = await fetch(`${location.origin}/config.json?t=${Date.now()}`, {
+      cache: "no-cache",
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
 
     if (!res.ok) {
@@ -156,8 +159,7 @@ async function commit(data) {
 
 // ================== FUNGSI UTIL ==================
 async function fetchDataJson(file) {
-  const now = Date.now();
-  const response = await fetch(`https://raw.githubusercontent.com/${_dekeku.repo.username}/${_dekeku.repo.repo}/refs/heads/main/assets/data/${file}.json?t=${now}`);
+  const response = await fetch(`https://raw.githubusercontent.com/${_dekeku.repo.username}/${_dekeku.repo.repo}/refs/heads/main/assets/data/${file}.json?t=${Date.now()}`);
   if (!response.ok) throw new Error('Network response was not ok');
   return await response.json();
 }
