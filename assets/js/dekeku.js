@@ -21,7 +21,7 @@ if (isDevelopmentMode()) {
 async function initDekeku() {
   showLoader();
   if (typeof _dekeku.accessPage !== 'undefined'){checkAccess(_dekeku.accessPage)}
-  await initConfig();
+  _dekeku.repo = await initConfig();
   bindDataAttributes();
 
   if (cekArray(window._daftarJson)){
@@ -57,7 +57,7 @@ async function initConfig (){
     return;
   }
   const data = await config.json();
-  _dekeku.repo = data.repository;
+  return data.repository;
 }
 // ============================= INIT END =============================
 function gtag(){
