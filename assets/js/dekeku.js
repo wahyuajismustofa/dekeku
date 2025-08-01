@@ -1,6 +1,9 @@
 // ============================= INIT START =============================
-_dekeku = {};
-window._dekeku = _dekeku;
+if (typeof window._dekeku === "undefined"){ window._dekeku={}}
+_dekeku = window._dekeku;
+_dekeku.user = JSON.parse(localStorage.getItem('user'));
+_dekeku.accessPage = window._accessPage;
+delete window._accessPage;
 function isDevelopmentMode() {
   const devHostnames = ['localhost', '127.0.0.1','wise-hyena-absolutely.ngrok-free.app'];
   const isLocalhost = devHostnames.includes(window.location.hostname);
@@ -16,7 +19,8 @@ if (isDevelopmentMode()) {
 }
 
 async function initDekeku() {
-  showLoader();  
+  showLoader();
+  if (typeof _dekeku.accessPage !== 'undefined'){checkAccess(_dekeku.accessPage)}
   await initConfig();
   bindDataAttributes();
 
@@ -140,6 +144,49 @@ async function fetchDataJson(file) {
 function cekArray(arr) {
   return Array.isArray(arr) && arr.length > 0;
 }
+async function importKeyAESGCM(secret) {
+  const rawKey = new TextEncoder().encode(secret.padEnd(32, "_"));
+  return await crypto.subtle.importKey(
+    "raw",
+    rawKey,
+    { name: "AES-GCM" },
+    false,
+    ["encrypt", "decrypt"]
+  );
+}
+
+async function encryptAESGCM(text, secret) {
+  const key = await importKeyAESGCM(secret);
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const encodedText = new TextEncoder().encode(text);
+
+  const encrypted = await crypto.subtle.encrypt(
+    { name: "AES-GCM", iv },
+    key,
+    encodedText
+  );
+
+  const combined = new Uint8Array(iv.length + encrypted.byteLength);
+  combined.set(iv, 0);
+  combined.set(new Uint8Array(encrypted), iv.length);
+
+  return btoa(String.fromCharCode(...combined)); // Base64
+}
+
+async function decryptAESGCM(enText, secret) {
+  const key = await importKeyAESGCM(secret);
+  const encryptedBytes = Uint8Array.from(atob(enText), c => c.charCodeAt(0));
+  const iv = encryptedBytes.slice(0, 12);
+  const data = encryptedBytes.slice(12);
+
+  const decrypted = await crypto.subtle.decrypt(
+    { name: "AES-GCM", iv },
+    key,
+    data
+  );
+
+  return new TextDecoder().decode(decrypted);
+}
 // =========================== FORM ===========================
 function removePrefix(fullPath, filename) {
   if (!fullPath.startsWith(filename)) return fullPath;
@@ -192,8 +239,114 @@ async function handleWhatsAppFormSubmit(form){
   const waURL = `https://wa.me/${waAdmin}?text=${encodeURIComponent(pesan)}`;
   window.open(waURL, '_blank');  
 }
+async function handleDaftarFormSubmit(form) {
+  const data = Object.fromEntries(new FormData(form).entries());
+  if (data.password !== data.confirm_password){
+    showAlert("Password tidak sama","error");
+  }
 
+  const tokenRes = await fetch(`${_dekeku.urlApi}/token`);
+  const tokenData = await tokenRes.json();
+  if (!tokenData || !tokenData.token) {
+    throw new Error("Gagal mendapatkan token.");
+  }
+  const dataEn = await encryptAESGCM(JSON.stringify(data), tokenData.key);
 
+  const payload = {
+    token:tokenData.token,
+    data: dataEn,
+  };
+    const res = await fetch(`${_dekeku.urlApi}/register`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const response = await res.json();
+    if (!res.ok) {
+      showAlert(response.error, "error");
+    }
+      else {
+      showAlert("Pendaftaran berhasil!", "success");
+      localStorage.setItem("user", JSON.stringify(response.data));
+      window.location.replace('./');
+    } 
+}
+async function handleMasukFormSubmit(form) {
+  const data = Object.fromEntries(new FormData(form).entries());
+  if (data.username === "" || data.password === "") {
+    showAlert("Data tidak lengkap","error");
+    return;
+  }
+
+  const tokenRes = await fetch(`${_dekeku.urlApi}/token`);
+  const tokenData = await tokenRes.json();
+  if (!tokenData || !tokenData.token) {
+    throw new Error("Gagal mendapatkan token.");
+  }
+  const dataEn = await encryptAESGCM(JSON.stringify(data), tokenData.key);
+
+  const payload = {
+    token:tokenData.token,
+    data: dataEn,
+  };
+  const response = await fetch(`${_dekeku.urlApi}/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+
+  const result = await response.json();
+  if (result.success && result.data) {
+    localStorage.setItem("user", JSON.stringify(result.data));
+    showAlert("Login berhasil!", "success");
+    window.location.replace('./');
+  } else {
+    showAlert(result.error || "Tidak diketahui","error");
+  }
+}
+// ====================== AKUN ==============================
+function checkAccess({ requireLogin = false, requireGuest = false, allowedRoles = [] } = {}) {
+  const user = _dekeku?.user || null;
+  
+  if (requireLogin && user === null) {
+    window.location.href = "./masuk.html";
+    return false;
+  }
+  
+  if (requireGuest && user !== null) {
+    window.location.href = "./";
+    return false;
+  }
+  
+  if (requireLogin && allowedRoles.length && !allowedRoles.includes(user?.role)) {
+    window.location.href = "/403.html";
+    return false;
+  }
+
+  return true;
+}
+
+async function logout() {
+    try {
+    const response = await fetch(`${_dekeku.urlApi}/logout`);
+
+    const result = await response.json();
+
+    if (result.success) {
+      localStorage.removeItem("user");
+      window.location.href = './masuk.html';
+    } else {
+      console.warn("Logout gagal:", result.error || "Tidak diketahui");
+    }
+
+  } catch (err) {
+    console.error("Gagal memproses logout:", err);
+  }
+
+}
 // ====================== DATA ATRIBUT ======================
 const dataAttributeHandlers = {
   aksi: {
@@ -208,8 +361,19 @@ const dataAttributeHandlers = {
         e.preventDefault();
         await handleWhatsAppFormSubmit(el);
       });
+    },
+    "daftar": async el => {
+      el.addEventListener("submit", async e => {
+        e.preventDefault();
+        await handleDaftarFormSubmit(el);
+      });
+    },
+    "masuk": async el => {
+      el.addEventListener("submit", async e => {
+        e.preventDefault();
+        await handleMasukFormSubmit(el);
+      });
     }
-    // Tambahkan aksi lainnya di sini
   },
   variabel: {
     "link-wa": el => {
