@@ -50,7 +50,7 @@ async function initDekeku() {
 }
 
 async function initConfig (){
-  const config = await fetch("/config.json");
+  const config = await fetch(`${location.origin}/config.json`);
   if (!config.ok) {
     console.error('Repository Belum dikonfigurasi');
     showAlert("Repository Belum dikonfigurasi Silahkan Hubungi Admin", "error");
