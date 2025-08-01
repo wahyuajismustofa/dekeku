@@ -9,6 +9,32 @@ function isDevelopmentMode() {
   const isLocalhost = devHostnames.includes(window.location.hostname);
   return isLocalhost;
 }
+(async function () {
+  try {
+    const res = await fetch(`${location.origin}/config.json?t=${Date.now()}`);
+
+    if (!res.ok) {
+      console.error('Repository belum dikonfigurasi. Status:', res.status);
+      showAlert("Repository belum dikonfigurasi. Silakan hubungi Admin.", "error");
+      return null;
+    }
+
+    const raw = await res.text();
+    const data = JSON.parse(raw);
+
+    if (!data.repository) {
+      console.warn("Properti 'repository' tidak ditemukan dalam config.json");
+      showAlert("Konfigurasi tidak lengkap. Hubungi Admin.", "error");
+    }
+
+    _dekeku.repo = data.repository;
+
+  } catch (err) {
+    console.error("Gagal mengambil konfigurasi:", err);
+    showAlert("Terjadi kesalahan saat memuat konfigurasi.", "error");
+  }
+})();
+
 if (isDevelopmentMode()) {
   console.log("Huff.. 🛠️");
   _dekeku.urlApi = "http://127.0.0.1:8787";
@@ -20,18 +46,13 @@ if (isDevelopmentMode()) {
 
 async function initDekeku() {
   showLoader();
-  if (typeof _dekeku.accessPage !== 'undefined'){checkAccess(_dekeku.accessPage)}
-  _dekeku.repo = {};
-  _dekeku.repo = await initConfig();
+  if (typeof _dekeku.accessPage !== 'undefined'){checkAccess(_dekeku.accessPage)};
   bindDataAttributes();
 
   if (cekArray(window._daftarJson)){
   _dekeku.daftarJson = window._daftarJson;
   delete window._daftarJson;
-  await loadAllData().catch(err => {
-    console.error('Error loading data:', err);
-    showAlert("Gagal memuat data", "error");
-    });
+  await loadAllData();
   }
 
   const observer = new MutationObserver(mutations => {
@@ -50,38 +71,6 @@ async function initDekeku() {
   observer.observe(document.body, { childList: true, subtree: true });
 }
 
-async function initConfig() {
-  try {
-    const res = await fetch(`${location.origin}/config.json?t=${Date.now()}`, {
-      cache: "no-cache",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    if (!res.ok) {
-      console.error('Repository belum dikonfigurasi. Status:', res.status);
-      showAlert("Repository belum dikonfigurasi. Silakan hubungi Admin.", "error");
-      return null;
-    }
-
-    const raw = await res.text();
-    const data = JSON.parse(raw);
-
-    if (!data.repository) {
-      console.warn("Properti 'repository' tidak ditemukan dalam config.json");
-      showAlert("Konfigurasi tidak lengkap. Hubungi Admin.", "error");
-      return null;
-    }
-
-    return data.repository;
-
-  } catch (err) {
-    console.error("Gagal mengambil konfigurasi:", err);
-    showAlert("Terjadi kesalahan saat memuat konfigurasi.", "error");
-    return null;
-  }
-}
 
 // ============================= INIT END =============================
 function gtag(){
