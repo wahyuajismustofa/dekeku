@@ -65,7 +65,8 @@ async function initConfig() {
       return null;
     }
 
-    const data = await res.json();
+    const raw = await res.text();
+    const data = JSON.parse(raw);
 
     if (!data.repository) {
       console.warn("Properti 'repository' tidak ditemukan dalam config.json");
