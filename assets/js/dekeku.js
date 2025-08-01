@@ -1,38 +1,35 @@
 // ============================= INIT START =============================
 if (typeof window._dekeku === "undefined"){ window._dekeku={}}
 _dekeku = window._dekeku;
+if (JSON.parse(localStorage.getItem('user')) !== null){
 _dekeku.user = JSON.parse(localStorage.getItem('user'));
-_dekeku.accessPage = window._accessPage;
-delete window._accessPage;
+}
+if (typeof window._accessPage !== 'undefined'){
+  _dekeku.accessPage = window._accessPage;
+  delete window._accessPage;
+}
+
 function isDevelopmentMode() {
   const devHostnames = ['localhost', '127.0.0.1','wise-hyena-absolutely.ngrok-free.app'];
   const isLocalhost = devHostnames.includes(window.location.hostname);
   return isLocalhost;
 }
 (async function () {
-  try {
-    const res = await fetch(`${location.origin}/config.json?t=${Date.now()}`);
+  showLoader();
+  await initConfig();
+  gtag();
 
-    if (!res.ok) {
-      console.error('Repository belum dikonfigurasi. Status:', res.status);
-      showAlert("Repository belum dikonfigurasi. Silakan hubungi Admin.", "error");
-      return null;
-    }
-
-    const raw = await res.text();
-    const data = JSON.parse(raw);
-
-    if (!data.repository) {
-      console.warn("Properti 'repository' tidak ditemukan dalam config.json");
-      showAlert("Konfigurasi tidak lengkap. Hubungi Admin.", "error");
-    }
-    _dekeku.repo = data.repository;
-    gtag();
-
-  } catch (err) {
-    console.error("Gagal mengambil konfigurasi:", err);
-    showAlert("Terjadi kesalahan saat memuat konfigurasi.", "error");
+  if (typeof _dekeku.accessPage !== 'undefined') {
+    checkAccess(_dekeku.accessPage);
   }
+
+  if (isArray(window._daftarJson)){
+  _dekeku.daftarJson = window._daftarJson;
+  delete window._daftarJson;
+  await loadAllData();
+  }
+  bindDataAttributes();
+  observerDataAttributes();
 })();
 
 if (isDevelopmentMode()) {
@@ -43,35 +40,34 @@ if (isDevelopmentMode()) {
   _dekeku.urlApi = "https://api.dekeku.my.id";
 }
 
-async function initDekeku() {
-  showLoader();
-  if (typeof _dekeku.accessPage !== 'undefined'){checkAccess(_dekeku.accessPage)};
-  bindDataAttributes();
-
-  if (cekArray(window._daftarJson)){
-  _dekeku.daftarJson = window._daftarJson;
-  delete window._daftarJson;
-  await loadAllData();
-  }
-
-  const observer = new MutationObserver(mutations => {
-    for (const mutation of mutations) {
-      mutation.addedNodes.forEach(node => {
-        if (node.nodeType === 1) {
-          if (node.matches?.("[data-aksi], [data-variabel]")) {
-            bindDataAttributes(node.parentElement || node);
-          } else if (node.querySelectorAll) {
-            bindDataAttributes(node);
-          }
-        }
-      });
-    }
-  });
-  observer.observe(document.body, { childList: true, subtree: true });
-}
-
-
 // ============================= INIT END =============================
+async function initConfig() {
+  try {
+    const res = await fetch(`${location.origin}/config.json?t=${Date.now()}`);
+
+    if (!res.ok) {
+      console.error('Repository belum dikonfigurasi. Status:', res.status);
+      showAlert("Repository belum dikonfigurasi. Silakan hubungi Admin.", "error");
+      return;
+    }
+
+    const raw = await res.text();
+    const data = JSON.parse(raw);
+
+    if (!data.repository) {
+      console.warn("Properti 'repository' tidak ditemukan dalam config.json");
+      showAlert("Konfigurasi tidak lengkap. Hubungi Admin.", "error");
+      return;
+    }
+
+    _dekeku.repo = data.repository;
+
+  } catch (err) {
+    console.error("Gagal mengambil konfigurasi:", err);
+    showAlert("Terjadi kesalahan saat memuat konfigurasi.", "error");
+    return;
+  }  
+}
 function gtag(){
   if (document.querySelector('script[src*="googletagmanager.com/gtag/js"]')) return;
   var gtagScript = document.createElement('script');
@@ -152,7 +148,7 @@ async function fetchDataJson(file) {
   if (!response.ok) throw new Error('Network response was not ok');
   return await response.json();
 }
-function cekArray(arr) {
+function isArray(arr) {
   return Array.isArray(arr) && arr.length > 0;
 }
 async function importKeyAESGCM(secret) {
@@ -407,12 +403,24 @@ function bindDataAttributes(context = document) {
     });
   });
 }
+function observerDataAttributes(){
+  const observer = new MutationObserver(mutations => {
+    for (const mutation of mutations) {
+      mutation.addedNodes.forEach(node => {
+        if (node.nodeType === 1) {
+          if (node.matches?.("[data-aksi], [data-variabel]")) {
+            bindDataAttributes(node.parentElement || node);
+          } else if (node.querySelectorAll) {
+            bindDataAttributes(node);
+          }
+        }
+      });
+    }
+  });
+  observer.observe(document.body, { childList: true, subtree: true });  
+}
 
 // ================== EVENT LISTENER ==================
-document.addEventListener('DOMContentLoaded', async () => {
-  await initDekeku();
-});
-
 window.addEventListener('load', () => {
   hideLoader();
 });
