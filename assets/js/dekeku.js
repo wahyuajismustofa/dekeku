@@ -50,16 +50,35 @@ async function initDekeku() {
   observer.observe(document.body, { childList: true, subtree: true });
 }
 
-async function initConfig (){
-  const config = await fetch('/config.json');
-  if (!config.ok) {
-    console.error('Repository Belum dikonfigurasi');
-    showAlert("Repository Belum dikonfigurasi Silahkan Hubungi Admin", "error");
-    return;
+async function initConfig() {
+  try {
+    const res = await fetch(`${location.origin}/config.json`, {
+      cache: "no-cache"
+    });
+
+    if (!res.ok) {
+      console.error('Repository belum dikonfigurasi. Status:', res.status);
+      showAlert("Repository belum dikonfigurasi. Silakan hubungi Admin.", "error");
+      return null;
+    }
+
+    const data = await res.json();
+
+    if (!data.repository) {
+      console.warn("Properti 'repository' tidak ditemukan dalam config.json");
+      showAlert("Konfigurasi tidak lengkap. Hubungi Admin.", "error");
+      return null;
+    }
+
+    return data.repository;
+
+  } catch (err) {
+    console.error("Gagal mengambil konfigurasi:", err);
+    showAlert("Terjadi kesalahan saat memuat konfigurasi.", "error");
+    return null;
   }
-  const data = await config.json();
-  return data.repository;
 }
+
 // ============================= INIT END =============================
 function gtag(){
   if (document.querySelector('script[src*="googletagmanager.com/gtag/js"]')) return;
