@@ -33,7 +33,11 @@ let dataProdukShow = {};
 let dataProdukUpdate = {};
 let filters = {};
 let urlProduk = '';
-
+window._daftarJson = window._daftarJson || [];
+const namaFileBaru = "produk2";
+if (!window._daftarJson.includes(namaFileBaru)) {
+  window._daftarJson.push(namaFileBaru);
+}
 if (devMode){
   urlProduk = "/assets/data/produkDev.json";
 }else{
