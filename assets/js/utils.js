@@ -79,22 +79,37 @@
     };
   }
 
-  
-function waitForVariable(name, timeout = 5000) {
+function waitForVariable(valueGetter, timeout = 10000) {
   return new Promise((resolve, reject) => {
     const start = Date.now();
-    const interval = setInterval(() => {
-      const value = window[name];
-      if (value && Object.keys(value).length > 0) {
-        clearInterval(interval);
-        resolve(value);
-      } else if (Date.now() - start > timeout) {
-        clearInterval(interval);
-        reject(new Error(`${name} tidak tersedia dalam ${timeout}ms`));
+
+    const check = () => {
+      try {
+        const value = valueGetter();
+        if (value && typeof value === 'object' && Object.keys(value).length > 0) {
+          resolve(value);
+        } else if (typeof value === 'string' && value.trim() !== '') {
+          resolve(value);
+        } else if (Array.isArray(value) && value.length > 0) {
+          resolve(value);
+        } else if (Date.now() - start >= timeout) {
+          reject(new Error(`Variabel tidak tersedia dalam ${timeout}ms`));
+        } else {
+          setTimeout(check, 100);
+        }
+      } catch (e) {
+        if (Date.now() - start >= timeout) {
+          reject(new Error(`Variabel error atau belum tersedia dalam ${timeout}ms`));
+        } else {
+          setTimeout(check, 100);
+        }
       }
-    }, 100);
+    };
+
+    check();
   });
 }
+
 
   const utils = {
     showAlert,

@@ -62,8 +62,7 @@
   <!-- NOTICE: You can use the _analytics.html partial to include production code specific code & trackers -->
  </head>
  <body>
-  <div id="loadingScreen">
-  </div>
+  <div id="loadingScreen" class="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center" style="background-color: rgb(230, 231, 238); z-index: 1050; transition: opacity 0.3s;"><div class="spinner-border" style="width: 4rem; height: 4rem; color: #44476A;" role="status"></div></div>
   <header class="header-global fixed-top" id="header-global">
   </header>
   <main>
@@ -120,7 +119,11 @@
   <footer class="d-flex pb-5 pt-6 pt-md-7 border-top border-light bg-primary" id="footer-global">
   </footer>
   <!-- Core -->
-  <script defer="" src="/assets/js/include.js">
+  <script type="module" src="/assets/js/dekeku.js">
+  </script>
+  <script type="module" src="/assets/js/main.js">
+  </script>
+  <script defer="" src="/assets/js/utils.js">
   </script>
   <script crossorigin="anonymous" integrity="sha512-k2WPPrSgRFI6cTaHHhJdc8kAXaRM4JBFEDo1pPGGlYiOyv4vnA0Pp0G5XMYYxgAPmtmv/IIaQA6n5fLAyJaFMA==" referrerpolicy="no-referrer" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.0/jquery.min.js">
   </script>
@@ -153,8 +156,7 @@
   </script>
   <script defer="" src="/assets/js/tema.js">
   </script>
-  <script defer="" src="/assets/js/dekeku.js">
-  </script>
+
   <script defer="" src="/assets/js/order.js">
   </script>
  </body>

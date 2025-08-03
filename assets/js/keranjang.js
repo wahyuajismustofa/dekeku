@@ -1,5 +1,9 @@
-let keranjang = [];
+import { updateCartBadge } from "./utils/cart.js";
+import { getLSJson, addLSJson, remLSById } from "./data/localstorage.js";
+import { makeGlobal } from "./utils/utils.js";
+import { getPayLinkByHarga } from "./api/midtrans.js";
 
+let keranjang = [];
 
 document.addEventListener("DOMContentLoaded", function () {
   setupKeranjang();
@@ -11,34 +15,6 @@ function setupKeranjang(){
     setupEventQtySelector(keranjang);
 }
 
-
-function getLSJson(item) {
-  const data = localStorage.getItem(item);
-  return data ? JSON.parse(data) : [];
-}
-
-function addLSJson(nama, json) {
-  let data = [];
-
-  // Coba ambil data sebelumnya
-  try {
-    const tersimpan = localStorage.getItem(nama);
-    if (tersimpan) {
-      data = JSON.parse(tersimpan);
-      
-      if (!Array.isArray(data)) {
-        console.warn(`Data di '${nama}' bukan array. Akan ditimpa sebagai array.`);
-        data = [];
-      }
-    }
-  } catch (e) {
-    console.warn(`Gagal parse data dari localStorage key '${nama}':`, e);
-  }
-  
-  data.push(json);
-
-  localStorage.setItem(nama, JSON.stringify(data));
-}
 
 function tampilkanKeranjang(keranjang) {
   const cartItemEl = document.getElementById("cartItem");
@@ -88,7 +64,7 @@ function tampilkanKeranjang(keranjang) {
                 </select>
               </div>
               <div class="ml-auto">
-                <a class="btn-link text-dark" href="#" onclick="hapusItem(${index})">
+                <a class="btn-link text-dark" data-hapus-item-keranjang="${item.id}">
                   <span class="far fa-trash-alt mr-2"></span>Hapus
                 </a>
               </div>
@@ -99,6 +75,20 @@ function tampilkanKeranjang(keranjang) {
     `;
 
     cartItemEl.insertAdjacentHTML("beforeend", itemHTML);
+  });
+
+  document.addEventListener("click", function (e) {
+    const target = e.target.closest("[data-hapus-item-keranjang]");
+    if (!target) return;
+
+    const id = target.getAttribute("data-hapus-item-keranjang");
+    if (!id) return;
+
+    remLSById (id, 'keranjang', keranjangBaru => {
+    tampilkanKeranjang(keranjangBaru);
+    updateCartBadge();
+  });
+
   });
 
   document.getElementById("subTotalCart").innerText = `Rp${total.toLocaleString()}`;
@@ -121,13 +111,6 @@ function setupEventQtySelector(keranjang) {
   });
 }
 
-// ✅ Hapus item dari keranjang
-function hapusItem(index) {
-  keranjang.splice(index, 1);
-  localStorage.setItem("keranjang", JSON.stringify(keranjang));
-  setupKeranjang();
-  updateCartBadge();
-}
 
 // ✅ Event tombol proses pesanan
 function setupTombolPesan() {
@@ -145,7 +128,7 @@ async function kirimPesananKeWhatsApp() {
   }
 
   let pesan = `*DETAIL PESANAN ANDA:*\n____________________________\n`;
-  let payLink ='';
+  let order = [];
   let total = 0;
   keranjang.forEach((item, i) => {
     const subtotal = item.harga * item.jumlah;
@@ -172,7 +155,7 @@ async function kirimPesananKeWhatsApp() {
   });
   pesan += `*TOTAL: Rp${total.toLocaleString()}*\n`;
 
-  order = await getPayLink(total);
+  order = await getPayLinkByHarga(total);
 
   addLSJson("order", {
     order_id: order.order_id,
@@ -190,28 +173,8 @@ async function kirimPesananKeWhatsApp() {
   pesan += "_Silakan konfirmasi pembayaran untuk melanjutkan proses pemesanan. Terima kasih!_";
 
   const encoded = encodeURIComponent(pesan);
-  const waLink = `https://wa.me/${waAdmin}?text=${encoded}`;
+  const waLink = `https://wa.me/${_dekeku.repo.waAdmin}?text=${encoded}`;
   window.open(waLink, "_blank");
 }
 
-async function getPayLink(harga) {
-  try {
-    const res = await fetch("https://midtrans-worker.wahyuajismustofa333.workers.dev/sandbox-transaksi", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ harga })
-    });
-
-    const data = await res.json();
-
-    if (data.snap_url) {
-      return data
-    } else {
-      console.log("Gagal membuat pembayaran: " + (data.error || "Unknown error"));
-    }
-  } catch (err) {
-    console.log("Terjadi kesalahan: " + err.message);
-  }
-}
+makeGlobal({kirimPesananKeWhatsApp});

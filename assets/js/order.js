@@ -153,7 +153,7 @@ function tampilkanOrder(order) {
     switch ((order.status || "").toLowerCase()) {
       case "paid":
         button = `
-          <a href="https://wa.me/${waAdmin}?text=Saya%20sudah%20melakukan%20pembayaran%20untuk%20pesanan%20dengan%20ID%20${order.order_id}" class="btn btn-sm btn-primary" target="_blank">
+          <a href="https://wa.me/${_dekeku.repo.waAdmin}?text=Saya%20sudah%20melakukan%20pembayaran%20untuk%20pesanan%20dengan%20ID%20${order.order_id}" class="btn btn-sm btn-primary" target="_blank">
             <i class="fab fa-whatsapp"></i> Konfirmasi
           </a>`;
         break;

@@ -62,8 +62,7 @@
   <!-- NOTICE: You can use the _analytics.html partial to include production code specific code & trackers -->
  </head>
  <body>
-  <div id="loadingScreen">
-  </div>
+  <div id="loadingScreen" class="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center" style="background-color: rgb(230, 231, 238); z-index: 1050; transition: opacity 0.3s;"><div class="spinner-border" style="width: 4rem; height: 4rem; color: #44476A;" role="status"></div></div>
   <header class="header-global fixed-top" id="header-global">
   </header>
   <main>
@@ -123,57 +122,22 @@
        </span>
       </div>
      </div>
-     <div class="card bg-primary shadow-inset border-light p-2 mb-4">
-      <div class="card-body shadow-soft border border-light rounded p-1">
-       <div class="text-center d-flex flex-wrap justify-content-around" id="filter-produk">
-       </div>
-      </div>
-     </div>
-     <div class="row" id="daftar-produk">
+     <div class="text-center d-flex flex-wrap justify-content-around" data-element="filter-produk"></div>
+     <div class="row" data-element="daftar-produk">
      </div>
     </div>
    </div>
   </main>
-  <!-- Modal Buy -->
-  <div aria-labelledby="buyModalLabel" class="modal fade" id="buyModal" role="dialog" tabindex="-1">
-   <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-     <!-- Header -->
-     <div class="modal-header">
-      <h2 class="h6 modal-title mb-0" id="buyModalLabel">
-       Pilih Paket
-      </h2>
-      <button aria-label="Close" class="close" data-dismiss="modal" type="button">
-       <span aria-hidden="true">
-        ×
-       </span>
-      </button>
-     </div>
-     <!-- Body -->
-     <div class="modal-body" id="buyModalBody">
-     </div>
-     <!-- Footer -->
-     <div class="modal-footer">
-      <button class="btn btn-primary text-danger" data-dismiss="modal" type="button">
-       Batal
-      </button>
-      <button class="btn btn-sm btn-primary ml-auto" onclick="submitBuyModal(event)" type="button">
-       <span class="mr-1">
-        <span class="fas fa-shopping-cart">
-        </span>
-       </span>
-       Tambah ke Keranjang
-      </button>
-     </div>
-    </div>
-   </div>
-  </div>
   <script>
   </script>
   <footer class="d-flex pb-5 pt-6 pt-md-7 border-top border-light bg-primary" id="footer-global">
   </footer>
   <!-- Core -->
-  <script defer="" src="/assets/js/include.js">
+  <script type="module" src="/assets/js/dekeku.js">
+  </script>
+  <script type="module" src="/assets/js/main.js">
+  </script>
+  <script defer="" src="/assets/js/utils.js">
   </script>
   <script crossorigin="anonymous" integrity="sha512-k2WPPrSgRFI6cTaHHhJdc8kAXaRM4JBFEDo1pPGGlYiOyv4vnA0Pp0G5XMYYxgAPmtmv/IIaQA6n5fLAyJaFMA==" referrerpolicy="no-referrer" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.0/jquery.min.js">
   </script>
@@ -206,28 +170,7 @@
   </script>
   <script defer="" src="/assets/js/tema.js">
   </script>
-  <script defer="" src="/assets/js/dekeku.js">
-  </script>
-  <script defer="" src="/assets/js/produk.js">
-  </script>
-  <script defer="" src="/assets/js/utils.js">
-  </script>
-  <script>
-   document.addEventListener("DOMContentLoaded", function () {
-    renderProdukdanFilter();
-    });
-  </script>
-  <script type="module">
-   import { WAM } from 'https://cdn.jsdelivr.net/gh/wahyuajismustofa/berbagi-koding/js/sync-data-repo@v1.2.js';
-    
-    await WAM.init();
-
-    try {
-        const data = await waitForVariable("dataProdukUpdate");
-        WAM.cekSync(data);
-    } catch (err) {
-        console.error("[wam-sync]: Gagal mendapatkan dataProdukUpdate:", err);
-    }
+  <script type="module" src="/assets/js/produk.js">
   </script>
  </body>
 </html>
