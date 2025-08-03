@@ -1,6 +1,7 @@
 import { removePrefix, getNestedValue, insertWithAutoId } from "../utils/jsonHandler.js";
 import { fetchDataJson } from "../data/fetch.js";
 import { createCommit,getEncryptedPayload } from "../utils/commit.js";
+import { showAlert } from "../utils/utils.js";
 
 const commit = createCommit(window._dekeku);
 

@@ -12,17 +12,17 @@ export function checkAccess({ requireLogin = false, requireGuest = false, allowe
   const user = _dekeku?.user || null;
   
   if (requireLogin && user === null) {
-    window.location.href = "/akun/masuk.html";
+    window.location.href = "/dev/akun/masuk.html";
     return false;
   }
   
   if (requireGuest && user !== null) {
-    window.location.href = "/akun//";
+    window.location.href = "/dev/akun/";
     return false;
   }
   
   if (requireLogin && allowedRoles.length && !allowedRoles.includes(user?.role)) {
-    window.location.href = "/403.html";
+    window.location.href = "/dev/403.html";
     return false;
   }
 
