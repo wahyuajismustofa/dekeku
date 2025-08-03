@@ -6,7 +6,7 @@ import { showBuyModal } from "./dom/modal.js";
 // ================== DATA PRODUK ==================
 const _dekeku = window._dekeku;
 window._daftarJson = window._daftarJson || [];
-const namaFileProduk = "produk2";
+const namaFileProduk = "produk";
 if (!window._daftarJson.includes(namaFileProduk)) {
   window._daftarJson.push(namaFileProduk);
 }
