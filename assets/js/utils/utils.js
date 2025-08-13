@@ -2,7 +2,13 @@
 export function showAlert(message, type = 'info', duration = 3000) {
   const existing = document.getElementById('wrapperAlert');
   if (existing) existing.remove();
-
+  const typeMap = {
+    error: 'danger',
+    success: 'success',
+    info: 'info',
+    warning: 'warning'
+  };
+  type = typeMap[type] || type;
   const wrapper = document.createElement('div');
   wrapper.id = 'wrapperAlert';
   wrapper.className = 'position-fixed start-50 translate-middle-x mt-3';
@@ -153,5 +159,32 @@ export function makeGlobal(fnObj, target = window) {
     if (typeof value === 'function') {
       target[key] = value;
     }
+  }
+}
+
+export function defineOrIncrement(obj, key, initial) {
+  if (typeof obj[key] === 'undefined') {
+    obj[key] = initial;
+  } else {
+    obj[key] += 1;
+  }
+}
+
+export function getJsonFromSession (key) {
+  try {
+    const storedData = sessionStorage.getItem(key);
+    if (!storedData) return null;
+
+    return JSON.parse(storedData);
+  } catch (error) {
+    console.error(`Gagal parse data untuk key "${key}":`, error);
+    return null;
+  }
+}
+export function saveJsonToSession (key, value) {
+  try {
+    sessionStorage.setItem(key, JSON.stringify(value));
+  } catch (error) {
+    console.error(`Gagal simpan data untuk key "${key}":`, error);
   }
 }

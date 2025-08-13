@@ -4,6 +4,14 @@
     if (existing){
       existing.remove();
     }
+    const typeMap = {
+      error: 'danger',
+      success: 'success',
+      info: 'info',
+      warning: 'warning'
+    };
+    type = typeMap[type] || type;
+    
     const wrapper = document.createElement('div');
     wrapper.id = 'wrapperAlert';
     wrapper.className = 'position-fixed start-50 translate-middle-x mt-3';

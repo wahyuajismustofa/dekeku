@@ -3,7 +3,7 @@ import { encryptAESGCM } from "../crypto/aesgcm.js";
 
 export function createCommit(_dekeku) {
   return async function commit(data) {
-    const res = await fetch(`${_dekeku.urlApi}/commit`, {
+    const res = await fetch(`${_dekeku.urlApi}/gh/commit`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ data })

@@ -54,3 +54,51 @@ export function filterData(data, filters) {
     });
   });
 }
+
+export function ensureArray(input) {
+  if (Array.isArray(input)) {
+    return input;
+  }
+  if (input === undefined || input === null) {
+    return [];
+  }
+  return [input];
+}
+
+export function isNonEmptyArray(value) {
+  return Array.isArray(value) && value.length > 0;
+}
+
+export function normalizeToArray(val) {
+  if (Array.isArray(val)) return val;
+
+  // Jika string dengan tanda kurung siku, seperti '[abc]', '[1,2]'
+  if (typeof val === "string" && /^\[.*\]$/.test(val.trim())) {
+    // Hilangkan tanda kurung lalu pecah berdasarkan koma
+    const inner = val.slice(1, -1); // hapus [ dan ]
+    return inner.split(',').map(v => v.trim().replace(/^["']|["']$/g, ''));
+  }
+
+  // Bungkus sebagai array biasa
+  return [val];
+}
+
+export function paginate(data = [], page = 1, perPage = 10) {
+  const total = data.length;
+  const totalPages = Math.ceil(total / perPage);
+  const start = (page - 1) * perPage;
+  const end = start + perPage;
+  const paginatedItems = data.slice(start, end);
+
+  return {
+    currentPage: page,
+    perPage,
+    total,
+    totalPages,
+    data: paginatedItems
+  };
+}
+export function totalPaginate(totalItems, perPage = 10) {
+  if (!totalItems || perPage <= 0) return 0;
+  return Math.ceil(totalItems / perPage);
+}

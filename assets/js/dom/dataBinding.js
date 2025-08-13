@@ -4,6 +4,7 @@ import {
   handleDaftarFormSubmit,
   handleMasukFormSubmit
 } from "../form/github.js";
+import { passwordToggle } from "../form/utils.js";
 
 const FORM_HANDLERS = {
   "github-post": handleGithubPostFormSubmit,
@@ -25,6 +26,13 @@ export const dataAttributeHandlers = {
             console.error(`Gagal menjalankan aksi '${key}' pada elemen:`, el, err);
           }
         });
+        if (el.querySelector(".toggle-password")) {
+          try {
+            passwordToggle();
+          } catch (err) {
+            console.warn("Gagal menjalankan passwordToggle:", err);
+          }
+        }        
       }
     ])
   ),
