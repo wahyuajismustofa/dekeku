@@ -69,6 +69,15 @@ export function isNonEmptyArray(value) {
   return Array.isArray(value) && value.length > 0;
 }
 
+export function isNonEmptyObject(obj) {
+  return (
+    typeof obj === "object" &&
+    obj !== null &&
+    !Array.isArray(obj) &&
+    Object.keys(obj).length > 0
+  );
+}
+
 export function normalizeToArray(val) {
   if (Array.isArray(val)) return val;
 

@@ -6,11 +6,12 @@ import { showBuyModal } from "./dom/modal.js";
 // ================== DATA PRODUK ==================
 const _dekeku = window._dekeku;
 window._daftarJson = window._daftarJson || [];
-const namaFileProduk = "produk";
-if (!window._daftarJson.includes(namaFileProduk)) {
-  window._daftarJson.push(namaFileProduk);
+const file = {file:"produk", nama: "produk"};
+const file2 = {file:"data.seller",filter: { id:1 }, obj:true , nama: "seller"};
+if (!window._daftarJson.includes(file)) {
+  window._daftarJson.push(file);
+  window._daftarJson.push(file2);
 }
-
 waitForCondition(
   () => typeof _dekeku !== "undefined" && _dekeku.ready === true,
   () => {
@@ -43,9 +44,9 @@ async function renderProdukdanFilter(){
 }
 
 async function getDataProduk() {
-  dataProduk = _dekeku.dataJson[namaFileProduk].produk;
-  dataKategori = _dekeku.dataJson[namaFileProduk].kategori;
-  dataPaket = _dekeku.dataJson[namaFileProduk].paket;
+  dataProduk = _dekeku.dataJson[file.nama].produk;
+  dataKategori = _dekeku.dataJson[file.nama].kategori;
+  dataPaket = _dekeku.dataJson[file.nama].paket;
   dataProduk = enrichWithLookups(dataProduk, { kategori: dataKategori, paket: dataPaket });
 }
 
