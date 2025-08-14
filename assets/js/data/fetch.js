@@ -1,5 +1,6 @@
 export async function fetchDataJson(file, repo) {
   const { username, repo: repoName } = repo;
+  console.log("Dekeku Memuat: ", file);
   const url = `https://raw.githubusercontent.com/${username}/${repoName}/refs/heads/main/assets/data/${file}.json?t=${Date.now()}`;
 
   try {
