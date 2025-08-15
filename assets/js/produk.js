@@ -1,25 +1,23 @@
-import { waitForCondition } from "./utils/utils.js";
 import { enrichWithLookups, filterData } from "./utils/jsonHandler.js";
-import { writeURLParams, readURLParams } from "./utils/urlParams.js";
 import { wrapElement, getUniqueId } from "./dom/utils.js";
 import { showBuyModal } from "./dom/modal.js";
+import dekeku, { dekekuFunction as _dF } from "./dekeku.js";
 // ================== DATA PRODUK ==================
-const _dekeku = window._dekeku;
-window._daftarJson = window._daftarJson || [];
 const file = {file:"produk", nama: "produk"};
-const file2 = {file:"data.seller",filter: { id:1 }, obj:true , nama: "seller"};
-if (!window._daftarJson.includes(file)) {
-  window._daftarJson.push(file);
-  window._daftarJson.push(file2);
-}
-waitForCondition(
-  () => typeof _dekeku !== "undefined" && _dekeku.ready === true,
-  () => {
-    renderProdukdanFilter();
+const file2 = {file:"testing.form", nama: "form"};
+_dF.waitForCondition(
+  () => typeof dekeku !== "undefined" && dekeku.ready === true,
+  async () => {
+    dekeku.prosesJs += 1;
+    _dF.pushUniqueObj(dekeku.daftarJson,"nama",file,file2);
+    await _dF.loadAllData(dekeku);
+    await renderProdukdanFilter();
+    dekeku.prosesJs -= 1;
+    _dF.saveDekeku();
   },
   {
     timeout: 5000,
-    onTimeout: () => console.error("Gagal menunggu _dekeku.ready"),
+    onTimeout: () => console.error("Gagal menunggu dekeku.ready"),
   }
 );
 
@@ -37,16 +35,16 @@ let PRODUK_PER_HALAMAN = 10;
 
 async function renderProdukdanFilter(){
   await getDataProduk();
-  filters = readURLParams();
+  filters = _dF.readURLParams();
   updateDataProdukShow();
   renderFilters(dataProduk, keyFilterProduk);
   renderProduk(dataProdukShow);
 }
 
 async function getDataProduk() {
-  dataProduk = _dekeku.dataJson[file.nama].produk;
-  dataKategori = _dekeku.dataJson[file.nama].kategori;
-  dataPaket = _dekeku.dataJson[file.nama].paket;
+  dataProduk = dekeku.dataJson[file.nama].produk;
+  dataKategori = dekeku.dataJson[file.nama].kategori;
+  dataPaket = dekeku.dataJson[file.nama].paket;
   dataProduk = enrichWithLookups(dataProduk, { kategori: dataKategori, paket: dataPaket });
 }
 
@@ -155,7 +153,7 @@ function setupFilterListeners() {
       } else {
         filters[key] = value;
       }
-      writeURLParams(filters);
+      _dF.writeURLParams(filters);
       updateDataProdukShow();
       renderProduk(dataProdukShow);
     });

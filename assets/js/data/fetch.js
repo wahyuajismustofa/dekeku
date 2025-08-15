@@ -6,7 +6,7 @@ export async function fetchDataJson(file, repo) {
   const infoFile = file.file.split(".");
   const fileName = infoFile.shift();
   const path = infoFile;
-  console.log("Dekeku Memuat: ", file);
+  console.log("Dekeku Memuat: ", file.nama);
   const url = `https://raw.githubusercontent.com/${username}/${repoName}/refs/heads/main/assets/data/${fileName}.json?t=${Date.now()}`;
 
   try {
@@ -79,4 +79,31 @@ export async function loadAllData(dekeku, force = false) {
   }
 }
 
-
+export function setDataJson(file, data) {
+  const infoFile = file.file.split(".");
+  const fileName = infoFile.shift();
+  const path = infoFile;
+  console.log("Dekeku Set: ", fileName);
+    try {
+      let target = data;
+      if (path.length > 0){
+        for (let i = 0; i < path.length ; i++) {
+          if (!target[path[i]]) {
+            target[path[i]] = {};
+          }
+          target = target[path[i]];
+        }
+      }
+      if (isNonEmptyObject(file.filter)){
+        target = target.filter(sift(file.filter));
+      }
+      if (file.obj){
+          target = target[0];
+      }
+      _dekeku.dataJson[file.nama] = target;
+      return true;
+  } catch (err) {
+    console.error(`Error set data ${fileName}:`, err);
+    return false;
+  }
+}

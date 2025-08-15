@@ -1,34 +1,49 @@
 // ========== Import ==========
 import { hideLoader, initConfig, gtag } from "./core/dekeku.js";
-import { loadAllData } from "./data/fetch.js";
+import { loadAllData, setDataJson } from "./data/fetch.js";
 import { bindDataAttributes, observerDataAttributes } from "./dom/dataBinding.js";
-import { isNonEmptyArray, getEnvironment } from "./utils/dekeku.js";
-import { defineOrIncrement, waitForCondition, getJsonFromSession, saveJsonToSession } from "./utils/utils.js";
+import { getEnvironment } from "./utils/dekeku.js";
+import { defineOrIncrement, waitForCondition, getDekekuFromSession, saveDekekuToSession, pushUniqueObj } from "./utils/utils.js";
+import { writeURLParams, readURLParams } from "./utils/urlParams.js";
 
 // ========== Global Context ==========
 if (!window._dekeku) window._dekeku = {};
 const _dekeku = window._dekeku;
 export default _dekeku;
+export const dekekuFunction = {
+  waitForCondition,
+  loadAllData,
+  saveDekeku: saveDekekuToSession,
+  pushUniqueObj,
+  writeURLParams,
+  readURLParams,
+  setDataJson
+};
 // ========== Inisialisasi ==========
 async function initDekeku() {
-  const cachedDekeku = getJsonFromSession("_dekeku");
+  const cachedDekeku = getDekekuFromSession();
 
   if (cachedDekeku) {
     Object.assign(_dekeku, cachedDekeku);
-  }else{
+  } else {
     _dekeku.repo = await initConfig();
     const { isDev, urlApi } = getEnvironment();
     _dekeku.devMode = isDev;
     _dekeku.urlApi = urlApi;
   }
-  console.log(_dekeku.devMode ? "Huff.. 🛠️" : "Yatta!..🚀");
-  if (isNonEmptyArray(window._daftarJson)) {
-    _dekeku.daftarJson = window._daftarJson;
-    delete window._daftarJson;
-    await loadAllData(_dekeku);
+    
+  for (const [key, fn] of Object.entries(dekekuFunction)) {
+    if (typeof fn === "function") {
+      _dekeku.function ??= {};
+      _dekeku.function[key] = fn;
+    }
   }
-  saveJsonToSession("_dekeku", _dekeku);
+  console.log(_dekeku.devMode ? "Huff.. 🛠️" : "Yatta!..🚀");
+  _dekeku.daftarJson = _dekeku.daftarJson || [];
+
+  saveDekekuToSession();
 }
+
 
 // ========== Selesai ==========
 function selesai() {
@@ -40,7 +55,7 @@ function selesai() {
       timeout: 5000,
       onTimeout: () => {
         _dekeku.prosesJs = 0;
-        console.warn("⏰ hideLoader() dijalankan paksa karena proses terlalu lama.");
+        console.warn("hideLoader() dijalankan paksa karena proses terlalu lama.");
         hideLoader();
       }
     }

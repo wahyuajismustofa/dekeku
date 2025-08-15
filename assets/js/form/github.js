@@ -15,7 +15,11 @@ export async function handleGithubPostFormSubmit(form) {
       });
 
     const resJson = await res.json();
-
+    let file = _dekeku.daftarJson.filter(item => item.file === fileKey)[0];
+    let setItem = _dekeku.function.setDataJson(file,resJson.data);
+    if (setItem){
+      _dekeku.function.saveDekeku();
+    }
     if (res.ok) {
       showAlert("Data Berhasil Dikirim", "success");
     } else {

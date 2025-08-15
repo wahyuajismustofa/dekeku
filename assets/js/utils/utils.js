@@ -188,3 +188,16 @@ export function saveJsonToSession (key, value) {
     console.error(`Gagal simpan data untuk key "${key}":`, error);
   }
 }
+export function getDekekuFromSession () {
+  return getJsonFromSession("_dekeku");
+}
+export function saveDekekuToSession () {
+  return saveJsonToSession("_dekeku",_dekeku);
+}
+export function pushUniqueObj(arr, key, ...items) {
+  for (const item of items) {
+    if (!arr.some(existing => existing[key] === item[key])) {
+      arr.push(item);
+    }
+  }
+}
