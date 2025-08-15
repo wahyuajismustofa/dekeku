@@ -4,7 +4,6 @@ import { showBuyModal } from "./dom/modal.js";
 import dekeku, { dekekuFunction as _dF } from "./dekeku.js";
 // ================== DATA PRODUK ==================
 const file = {file:"produk", nama: "produk"};
-const file2 = {file:"testing.form", nama: "form"};
 _dF.waitForCondition(
   () => typeof dekeku !== "undefined" && dekeku.ready === true,
   async () => {
