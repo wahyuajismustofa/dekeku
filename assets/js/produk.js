@@ -8,7 +8,7 @@ _dF.waitForCondition(
   () => typeof dekeku !== "undefined" && dekeku.ready === true,
   async () => {
     dekeku.prosesJs += 1;
-    _dF.pushUniqueObj(dekeku.daftarJson,"nama",file,file2);
+    _dF.pushUniqueObj(dekeku.daftarJson,"nama",file);
     await _dF.loadAllData(dekeku);
     await renderProdukdanFilter();
     dekeku.prosesJs -= 1;
