@@ -8,7 +8,7 @@ export async function handleGithubPostFormSubmit(form) {
 	try{
 		const data = getDataForm(form);
 		}catch (err){
-			_dekeku.function.showAlert(err,error, "error");
+			_dekeku.function.showAlert(err.error, "error");
 			}
 
     const res = await fetch(`${_dekeku.urlApi}/gh/data?action=post`,{
