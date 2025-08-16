@@ -21,7 +21,9 @@ export async function handleGithubPostFormSubmit(form) {
           _dekeku.function.saveDekeku();
         }
 
-      if (form.dataset.dekekuProxy)_dekeku.proxy[file.nama].value = true;
+      if (form.dataset.dekekuProxy){
+        _dekeku.proxy[file.nama].value = true
+      };
       _dekeku.function.showAlert("Data Berhasil Dikirim", "success");
     } else {
       _dekeku.function.showAlert(resJson.message || "Gagal mengirim data", "error");
@@ -54,7 +56,9 @@ export async function handleGithubUpdateFormSubmit(form) {
         _dekeku.function.saveDekeku();
       
       }
-      if (form.dataset.dekekuProxy)_dekeku.proxy[file.nama].value = true;
+      if (form.dataset.dekekuProxy){
+        _dekeku.proxy[file.nama].value = true
+      };
       _dekeku.function.showAlert("Data Berhasil Dikirim", "success");
     } else {
       _dekeku.function.showAlert(resJson.message || "Gagal mengirim data", "error");
