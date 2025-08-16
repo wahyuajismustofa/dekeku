@@ -4,7 +4,12 @@ export async function handleGithubPostFormSubmit(form) {
   try {
     const fileKey = form.dataset.file;
     if (!fileKey) return _dekeku.function.showAlert("Data-file tidak ditemukan", "error");
-    const data = getDataForm(form);
+	let data;
+	try{
+		const data = getDataForm(form);
+		}catch (err){
+			_dekeku.function.showAlert(err, "error");
+			}
 
     const res = await fetch(`${_dekeku.urlApi}/gh/data?action=post`,{
         method: "POST",
@@ -39,7 +44,13 @@ export async function handleGithubUpdateFormSubmit(form) {
     if (!fileKey) return _dekeku.function.showAlert("data-file belum di setting", "error");
     if (!fileFilter) return _dekeku.function.showAlert("data-filter belum di setting", "error");
 	const query = JSON.parse(fileFilter);
-    const data = getDataForm(form);
+    let data;
+	try{
+		const data = getDataForm(form);
+		}catch (err){
+			_dekeku.function.showAlert(err, "error");
+			}
+
 
     const res = await fetch(`${_dekeku.urlApi}/gh/data?action=update`,{
         method: "POST",
@@ -189,7 +200,7 @@ function getDataForm(form) {
     } else {
       obj[key] = [obj[key], value];
     }
-    
+
     if (field && field.tagName !== "INPUT" || field.type !== "hidden") {
       field.value = "";
     }    
