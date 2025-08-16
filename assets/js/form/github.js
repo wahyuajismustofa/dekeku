@@ -1,10 +1,9 @@
-import _dekeku from "../dekekuVar.js";
 import { getEncryptedPayload } from "../utils/commit.js";
 
 export async function handleGithubPostFormSubmit(form) {
   try {
     const fileKey = form.dataset.file;
-    if (!fileKey) return _dekeku.response = {ok : false, message: "Data-file tidak ditemukan"};
+    if (!fileKey) return _dekeku.function.showAlert("Data-file tidak ditemukan", "error");
     const data = getDataForm(form);
 
     const res = await fetch(`${_dekeku.urlApi}/gh/data?action=post`,{
@@ -20,12 +19,12 @@ export async function handleGithubPostFormSubmit(form) {
       _dekeku.function.saveDekeku();
     }
     if (res.ok) {
-		_dekeku.response = {ok : true, message: "Data Berhasil Dikirim"};
+      _dekeku.function.showAlert("Data Berhasil Dikirim", "success");
     } else {
-		_dekeku.response = {ok : false, message: resJson.message};
+      _dekeku.function.showAlert(resJson.message || "Gagal mengirim data", "error");
     }
   } catch (err) {
-	  _dekeku.response = {ok : false, message: err};
+    console.error("Error handleGithubPostFormSubmit:", err);
   }
 }
 
@@ -33,8 +32,8 @@ export async function handleGithubUpdateFormSubmit(form) {
   try {
     const fileKey = form.dataset.file;
     const fileFilter = form.dataset.filter;
-    if (!fileKey) return _dekeku.response = {ok : false, message: "data-file belum di setting"};
-    if (!fileFilter) return _dekeku.response = {ok : false, message: "data-filter belum di setting"};
+    if (!fileKey) return _dekeku.function.showAlert("data-file belum di setting", "error");
+    if (!fileFilter) return _dekeku.function.showAlert("data-filter belum di setting", "error");
 	const query = JSON.parse(fileFilter);
     const data = getDataForm(form);
 
@@ -49,15 +48,15 @@ export async function handleGithubUpdateFormSubmit(form) {
     let setItem = _dekeku.function.setDataJson(file,resJson.data);
     if (setItem){
       _dekeku.function.saveDekeku();
-	  _dekeku.response = {ok : true, message: "Berhasil Update data"};
+	  
     }
     if (res.ok) {
-      _dekeku.response = {ok : true, message: "Berhasil Update data"};
+      _dekeku.function.showAlert("Data Berhasil Dikirim", "success");
     } else {
-	  _dekeku.response = {ok : false, message: resJson.message};
+      _dekeku.function.showAlert(resJson.message || "Gagal mengirim data", "error");
     }
   } catch (err) {
-	_dekeku.response = {ok : false, message: err};
+    console.error("Error handleGithubPostFormSubmit:", err);
   }
 }
 
@@ -65,15 +64,12 @@ export async function handleDaftarFormSubmit(form) {
   const data = getDataForm(form);
 
   if (!data.username || !data.password || !data.confirm_password) {
-    _dekeku.response = {ok : false, message: "Semua field wajib diisi"};
-	return;
+    return _dekeku.function.showAlert("Semua field wajib diisi", "error");
   }
 
   data.username = data.username.toLowerCase();
   if (!/^[a-z0-9_]{3,20}$/.test(data.username)) {
-    _dekeku.response = {ok : false, message: "Username harus 3–20 karakter, huruf kecil, angka, atau underscore"};
-	return;
-	
+    return _dekeku.function.showAlert("Username harus 3–20 karakter, huruf kecil, angka, atau underscore", "error");
   }
 
   if (
@@ -83,13 +79,14 @@ export async function handleDaftarFormSubmit(form) {
     !/[0-9]/.test(data.password) ||
     !/[!@#\$%\^\&\*]/.test(data.password)
   ) {
-    _dekeku.response = {ok : false, message: "Password min 8 karakter dan mengandung huruf besar, kecil, angka, dan simbol."};
-	return;
+    return _dekeku.function.showAlert(
+      "Password min 8 karakter dan mengandung huruf besar, kecil, angka, dan simbol.",
+      "error"
+    );
   }
 
   if (data.password !== data.confirm_password) {
-	_dekeku.response = {ok : false, message: "Password dan konfirmasi tidak sama"};
-    return;
+    return _dekeku.function.showAlert("Password dan konfirmasi tidak sama", "error");
   }
 
   try {
@@ -102,14 +99,14 @@ export async function handleDaftarFormSubmit(form) {
 
     const response = await res.json();
     if (!res.ok) {
-		_dekeku.response = {ok : false, message: response.error};
+      _dekeku.function.showAlert(response.error || "Gagal mendaftar", "error");
     } else {
       localStorage.setItem("user", JSON.stringify(response.data));
-      _dekeku.response = {ok : true, message: "Pendaftaran Berhasil"};
+      notifySuccess("Pendaftaran berhasil!", './');
     }
   } catch (err) {
     console.error("Gagal daftar:", err);
-	_dekeku.response = {ok : false, message: err};
+    _dekeku.function.showAlert("Pendaftaran gagal", "error");
   }
 }
 
@@ -117,9 +114,7 @@ export async function handleMasukFormSubmit(form) {
   const data = getDataForm(form);
 
   if (!data.username || !data.password) {
-    _dekeku.response = {ok : false, message: "Username dan password wajib diisi"};
-	return;
-	
+    return _dekeku.function.showAlert("Username dan password wajib diisi", "error");
   }
 
   data.username = data.username.toLowerCase();
@@ -137,11 +132,11 @@ export async function handleMasukFormSubmit(form) {
       localStorage.setItem("user", JSON.stringify(result.data));
       notifySuccess("Login berhasil!", './');
     } else {
-	  _dekeku.response = {ok : false, message: result.error};
+      _dekeku.function.showAlert(result.error || "Login gagal", "error");
     }
   } catch (err) {
     console.error("Gagal login:", err);
-	_dekeku.response = {ok : false, message: err};
+    _dekeku.function.showAlert("Terjadi kesalahan saat login", "error");
   }
 }
 
@@ -201,6 +196,6 @@ function getDataForm(form) {
 }
 
 function notifySuccess(message, redirectTo = null) {
-  _dekeku.response = {ok : true, message: message};
+  _dekeku.function.showAlert(message, 'success');
   if (redirectTo) window.location.replace(redirectTo);
 }

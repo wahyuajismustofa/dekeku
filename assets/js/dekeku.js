@@ -5,7 +5,7 @@ import { hideLoader, initConfig, gtag } from "./core/dekeku.js";
 import { loadAllData, setDataJson } from "./data/fetch.js";
 import { bindDataAttributes, observerDataAttributes } from "./dom/dataBinding.js";
 import { getEnvironment } from "./utils/dekeku.js";
-import { defineOrIncrement, waitForCondition, getDekekuFromSession, saveDekekuToSession, pushUniqueObj } from "./utils/utils.js";
+import { showAlert,defineOrIncrement, waitForCondition, getDekekuFromSession, saveDekekuToSession, pushUniqueObj } from "./utils/utils.js";
 import { writeURLParams, readURLParams } from "./utils/urlParams.js";
 
 // ========== Global Context ==========
@@ -20,7 +20,8 @@ export const dekekuFunction = {
   pushUniqueObj,
   writeURLParams,
   readURLParams,
-  setDataJson
+  setDataJson,
+  showAlert
 };
 
 // ========== Inisialisasi ==========
