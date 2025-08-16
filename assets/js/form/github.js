@@ -148,7 +148,7 @@ function getDataForm(form) {
     const field = form.querySelector(`[name="${rawKey}"]`);
     if (field && field.hasAttribute("data-ignore")) continue;
 	if (field && field.dataset.type === "timestamp") {
-      obj[key] = new Date().toISOString();
+      obj[rawKey] = new Date().toISOString();
       continue;
     }
 
