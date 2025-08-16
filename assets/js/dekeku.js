@@ -19,6 +19,7 @@ export const dekekuFunction = {
   readURLParams,
   setDataJson
 };
+
 // ========== Inisialisasi ==========
 async function initDekeku() {
   const cachedDekeku = getDekekuFromSession();
