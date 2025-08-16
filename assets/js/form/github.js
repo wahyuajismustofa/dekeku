@@ -147,6 +147,10 @@ function getDataForm(form) {
   for (const [rawKey, value] of fd.entries()) {
     const field = form.querySelector(`[name="${rawKey}"]`);
     if (field && field.hasAttribute("data-ignore")) continue;
+	if (field && field.dataset.type === "timestamp") {
+      obj[key] = new Date().toISOString();
+      continue;
+    }
 
     // normalisasi nama key (misal: acara[] → acara)
     const key = rawKey.endsWith("[]") ? rawKey.slice(0, -2) : rawKey;
