@@ -140,7 +140,6 @@ export async function handleMasukFormSubmit(form) {
     showAlert("Terjadi kesalahan saat login", "error");
   }
 }
-
 function getDataForm(form) {
   const fd = new FormData(form);
   const obj = {};
@@ -151,6 +150,10 @@ function getDataForm(form) {
 
     // normalisasi nama key (misal: acara[] → acara)
     const key = rawKey.endsWith("[]") ? rawKey.slice(0, -2) : rawKey;
+    const isArrayField =
+      rawKey.endsWith("[]") ||
+      (field && field.type === "checkbox") ||
+      (field && field.multiple);
 
     // jika multiple select → simpan sebagai array
     if (field && field.tagName === "SELECT" && field.multiple) {
@@ -158,9 +161,8 @@ function getDataForm(form) {
       continue;
     }
 
-    // handle array field (checkbox / input dengan [] )
     if (!(key in obj)) {
-      obj[key] = value;
+      obj[key] = isArrayField ? [value] : value;
     } else if (Array.isArray(obj[key])) {
       obj[key].push(value);
     } else {
