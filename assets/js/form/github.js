@@ -157,19 +157,30 @@ function getDataForm(form) {
       obj[rawKey] = new Date().toISOString();
       continue;
     }
-
-    // normalisasi nama key (misal: acara[] → acara)
+	
     const key = rawKey.endsWith("[]") ? rawKey.slice(0, -2) : rawKey;
     const isArrayField =
       rawKey.endsWith("[]") ||
       (field && field.type === "checkbox") ||
       (field && field.multiple);
 
-    // jika multiple select → simpan sebagai array
+     if (field && field.hasAttribute("data-required")) {
+      const isEmpty = 
+        (field.type === "checkbox" && !field.checked) ||
+        (field.type === "radio" && !form.querySelector(`[name="${rawKey}"]:checked`)) ||
+        (!field.type && !value) || 
+        (value === "" || value === null);
+      if (isEmpty) {
+        throw new Error(`${key} wajib di isi`);
+      }
+    }
+      
     if (field && field.tagName === "SELECT" && field.multiple) {
       obj[key] = Array.from(field.selectedOptions).map(opt => opt.value);
       continue;
     }
+
+    
 
     if (!(key in obj)) {
       obj[key] = isArrayField ? [value] : value;
@@ -178,9 +189,12 @@ function getDataForm(form) {
     } else {
       obj[key] = [obj[key], value];
     }
+    
+    if (field && field.tagName !== "INPUT" || field.type !== "hidden") {
+      field.value = "";
+    }    
   }
-
-  // pastikan checkbox yang tidak dipilih tetap muncul (sebagai [])
+  
   const checkboxNames = new Set(
     Array.from(form.querySelectorAll('input[type="checkbox"][name]'))
       .filter(el => !el.hasAttribute("data-ignore"))
@@ -189,8 +203,7 @@ function getDataForm(form) {
   checkboxNames.forEach(name => {
     if (!(name in obj)) obj[name] = [];
   });
-
-  // isi nilai default jika kosong dan ada data-default
+  
   form.querySelectorAll("[name][data-default]").forEach(el => {
     const key = el.name.endsWith("[]") ? el.name.slice(0, -2) : el.name;
     if (!obj[key] || obj[key].length === 0) {
