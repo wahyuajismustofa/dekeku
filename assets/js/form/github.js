@@ -36,12 +36,13 @@ export async function handleGithubUpdateFormSubmit(form) {
     const fileFilter = form.dataset.filter;
     if (!fileKey) return showAlert("data-file belum di setting", "error");
     if (!fileFilter) return showAlert("data-filter belum di setting", "error");
+	const query = JSON.parse(fileFilter);
     const data = Object.fromEntries(new FormData(form).entries());
 
     const res = await fetch(`${_dekeku.urlApi}/gh/data?action=update`,{
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ detailFile:fileKey, newData: data, query: fileFilter })
+        body: JSON.stringify({ detailFile:fileKey, newData: data, query: query })
       });
 
     const resJson = await res.json();

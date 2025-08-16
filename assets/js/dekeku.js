@@ -10,6 +10,7 @@ import { writeURLParams, readURLParams } from "./utils/urlParams.js";
 if (!window._dekeku) window._dekeku = {};
 const _dekeku = window._dekeku;
 export default _dekeku;
+
 export const dekekuFunction = {
   waitForCondition,
   loadAllData,
