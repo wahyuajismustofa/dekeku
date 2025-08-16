@@ -6,7 +6,7 @@ export async function handleGithubPostFormSubmit(form) {
   try {
     const fileKey = form.dataset.file;
     if (!fileKey) return showAlert("Data-file tidak ditemukan", "error");
-    const data = Object.fromEntries(new FormData(form).entries());
+    const data = getDataForm(form);
 
     const res = await fetch(`${_dekeku.urlApi}/gh/data?action=post`,{
         method: "POST",
@@ -37,7 +37,7 @@ export async function handleGithubUpdateFormSubmit(form) {
     if (!fileKey) return showAlert("data-file belum di setting", "error");
     if (!fileFilter) return showAlert("data-filter belum di setting", "error");
 	const query = JSON.parse(fileFilter);
-    const data = Object.fromEntries(new FormData(form).entries());
+    const data = getDataForm(form);
 
     const res = await fetch(`${_dekeku.urlApi}/gh/data?action=update`,{
         method: "POST",
@@ -62,7 +62,7 @@ export async function handleGithubUpdateFormSubmit(form) {
 }
 
 export async function handleDaftarFormSubmit(form) {
-  const data = Object.fromEntries(new FormData(form).entries());
+  const data = getDataForm(form);
 
   if (!data.username || !data.password || !data.confirm_password) {
     return showAlert("Semua field wajib diisi", "error");
@@ -106,13 +106,13 @@ export async function handleDaftarFormSubmit(form) {
       notifySuccess("Pendaftaran berhasil!", './');
     }
   } catch (err) {
-    console.error("❌ Gagal daftar:", err);
+    console.error("Gagal daftar:", err);
     showAlert("Pendaftaran gagal", "error");
   }
 }
 
 export async function handleMasukFormSubmit(form) {
-  const data = Object.fromEntries(new FormData(form).entries());
+  const data = getDataForm(form);
 
   if (!data.username || !data.password) {
     return showAlert("Username dan password wajib diisi", "error");
@@ -136,9 +136,57 @@ export async function handleMasukFormSubmit(form) {
       showAlert(result.error || "Login gagal", "error");
     }
   } catch (err) {
-    console.error("❌ Gagal login:", err);
+    console.error("Gagal login:", err);
     showAlert("Terjadi kesalahan saat login", "error");
   }
+}
+
+function getDataForm(form) {
+  const fd = new FormData(form);
+  const obj = {};
+
+  for (const [rawKey, value] of fd.entries()) {
+    const field = form.querySelector(`[name="${rawKey}"]`);
+    if (field && field.hasAttribute("data-ignore")) continue;
+
+    // normalisasi nama key (misal: acara[] → acara)
+    const key = rawKey.endsWith("[]") ? rawKey.slice(0, -2) : rawKey;
+
+    // jika multiple select → simpan sebagai array
+    if (field && field.tagName === "SELECT" && field.multiple) {
+      obj[key] = Array.from(field.selectedOptions).map(opt => opt.value);
+      continue;
+    }
+
+    // handle array field (checkbox / input dengan [] )
+    if (!(key in obj)) {
+      obj[key] = value;
+    } else if (Array.isArray(obj[key])) {
+      obj[key].push(value);
+    } else {
+      obj[key] = [obj[key], value];
+    }
+  }
+
+  // pastikan checkbox yang tidak dipilih tetap muncul (sebagai [])
+  const checkboxNames = new Set(
+    Array.from(form.querySelectorAll('input[type="checkbox"][name]'))
+      .filter(el => !el.hasAttribute("data-ignore"))
+      .map(el => el.name.endsWith("[]") ? el.name.slice(0, -2) : el.name)
+  );
+  checkboxNames.forEach(name => {
+    if (!(name in obj)) obj[name] = [];
+  });
+
+  // isi nilai default jika kosong dan ada data-default
+  form.querySelectorAll("[name][data-default]").forEach(el => {
+    const key = el.name.endsWith("[]") ? el.name.slice(0, -2) : el.name;
+    if (!obj[key] || obj[key].length === 0) {
+      obj[key] = el.getAttribute("data-default");
+    }
+  });
+
+  return obj;
 }
 
 
