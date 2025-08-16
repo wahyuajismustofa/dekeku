@@ -20,8 +20,8 @@ export async function handleGithubPostFormSubmit(form) {
         if (setItem){
           _dekeku.function.saveDekeku();
         }
-		console.log(form.dataset.dekekuProxy);
-      if (form.dataset.dekekuProxy){
+		console.log(form.dataset.dekeku_proxy);
+      if (form.dataset.dekeku_proxy){
 		  console.log(_dekeku.proxy[file.nama].value);
         _dekeku.proxy[file.nama].value = true
       };
@@ -56,8 +56,8 @@ export async function handleGithubUpdateFormSubmit(form) {
       if (setItem){
         _dekeku.function.saveDekeku();
       }
-		console.log("dataset proxy",form.dataset.dekekuProxy);
-      if (form.dataset.dekekuProxy){
+		console.log("dataset proxy",form.dataset.dekeku_proxy);
+      if (form.dataset.dekeku_proxy){
 		  console.log("Nilai proxy",_dekeku.proxy[file.nama].value);
         _dekeku.proxy[file.nama].value = true
       };
