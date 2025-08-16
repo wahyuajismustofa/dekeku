@@ -30,6 +30,36 @@ export async function handleGithubPostFormSubmit(form) {
   }
 }
 
+export async function handleGithubUpdateFormSubmit(form) {
+  try {
+    const fileKey = form.dataset.file;
+    const fileFilter = form.dataset.filter;
+    if (!fileKey) return showAlert("data-file belum di setting", "error");
+    if (!fileFilter) return showAlert("data-filter belum di setting", "error");
+    const data = Object.fromEntries(new FormData(form).entries());
+
+    const res = await fetch(`${_dekeku.urlApi}/gh/data?action=update`,{
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ detailFile:fileKey, newData: data, query: fileFilter })
+      });
+
+    const resJson = await res.json();
+    let file = _dekeku.daftarJson.filter(item => item.file === fileKey)[0];
+    let setItem = _dekeku.function.setDataJson(file,resJson.data);
+    if (setItem){
+      _dekeku.function.saveDekeku();
+    }
+    if (res.ok) {
+      showAlert("Data Berhasil Dikirim", "success");
+    } else {
+      showAlert(resJson.message || "Gagal mengirim data", "error");
+    }
+  } catch (err) {
+    console.error("Error handleGithubPostFormSubmit:", err);
+  }
+}
+
 export async function handleDaftarFormSubmit(form) {
   const data = Object.fromEntries(new FormData(form).entries());
 

@@ -2,12 +2,14 @@ import { handleWhatsAppFormSubmit } from "../form/whatsapp.js";
 import {
   handleGithubPostFormSubmit,
   handleDaftarFormSubmit,
-  handleMasukFormSubmit
+  handleMasukFormSubmit,
+  handleGithubUpdateFormSubmit
 } from "../form/github.js";
 import { passwordToggle } from "../form/utils.js";
 
 const FORM_HANDLERS = {
   "github-post": handleGithubPostFormSubmit,
+  "github-update": handleGithubUpdateFormSubmit,
   "whatsapp": handleWhatsAppFormSubmit,
   "daftar": handleDaftarFormSubmit,
   "masuk": handleMasukFormSubmit,
