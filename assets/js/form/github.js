@@ -13,12 +13,15 @@ export async function handleGithubPostFormSubmit(form) {
       });
 
     const resJson = await res.json();
-    let file = _dekeku.daftarJson.filter(item => item.file === fileKey)[0];
-    let setItem = _dekeku.function.setDataJson(file,resJson.data);
-    if (setItem){
-      _dekeku.function.saveDekeku();
-    }
+
     if (res.ok) {
+      let file = _dekeku.daftarJson.filter(item => item.file === fileKey)[0];
+      let setItem = _dekeku.function.setDataJson(file,resJson.data);
+        if (setItem){
+          _dekeku.function.saveDekeku();
+        }
+
+      if (form.dataset.dekekuProxy)_dekeku.proxy[file.nama].value = true;
       _dekeku.function.showAlert("Data Berhasil Dikirim", "success");
     } else {
       _dekeku.function.showAlert(resJson.message || "Gagal mengirim data", "error");
@@ -44,13 +47,14 @@ export async function handleGithubUpdateFormSubmit(form) {
       });
 
     const resJson = await res.json();
-    let file = _dekeku.daftarJson.filter(item => item.file === fileKey)[0];
-    let setItem = _dekeku.function.setDataJson(file,resJson.data);
-    if (setItem){
-      _dekeku.function.saveDekeku();
-	  
-    }
     if (res.ok) {
+      let file = _dekeku.daftarJson.filter(item => item.file === fileKey)[0];
+      let setItem = _dekeku.function.setDataJson(file,resJson.data);
+      if (setItem){
+        _dekeku.function.saveDekeku();
+      
+      }
+      if (form.dataset.dekekuProxy)_dekeku.proxy[file.nama].value = true;
       _dekeku.function.showAlert("Data Berhasil Dikirim", "success");
     } else {
       _dekeku.function.showAlert(resJson.message || "Gagal mengirim data", "error");
