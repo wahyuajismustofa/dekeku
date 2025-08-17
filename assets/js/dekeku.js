@@ -27,6 +27,10 @@ export const dekekuFunction = {
 
 // ========== Inisialisasi ==========
 async function init() {
+  _dekeku.proxy = {};    
+  _dekeku.proxy.loadFile = makeFlagProxy(loadAllData);
+  _dekeku.proxy.saveDekeku = makeFlagProxy(saveDekeku);
+
   const cachedDekeku = getDekeku();
 
   if (cachedDekeku) {
@@ -39,7 +43,7 @@ async function init() {
     _dekeku.devMode = isDev;
     _dekeku.urlApi = urlApi;
     _dekeku.daftarJson = _dekeku.daftarJson || [];
-    _dekeku.proxy = {};   
+    _dekeku.proxy.saveDekeku.value = true;    
     _dekeku.prosesJs = 0;
   }
     
@@ -49,9 +53,6 @@ async function init() {
       _dekeku.function[key] = fn;
     }
   }
-  _dekeku.proxy.loadFile = makeFlagProxy(loadAllData);
-  _dekeku.proxy.saveDekeku = makeFlagProxy(saveDekeku);
-  _dekeku.proxy.saveDekeku.value = true;   
   console.log(_dekeku.devMode ? "Huff.. 🛠️" : "Yatta!..🚀");
 }
 
@@ -60,7 +61,9 @@ async function init() {
 function selesai() {
   waitForCondition(
     () => _dekeku.prosesJs === 0,
-    () => hideLoader(),
+    () => 
+      hideLoader(),
+    _dekeku.proxy.saveDekeku.value = true,
     {
       interval: 100,
       timeout: 5000,
