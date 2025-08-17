@@ -169,34 +169,35 @@ function getDataForm(form) {
   for (const [rawKey, value] of fd.entries()) {
     const field = form.querySelector(`[name="${rawKey}"]`);
     if (field && field.hasAttribute("data-ignore")) continue;
-	if (field && field.dataset.type === "timestamp") {
+
+    if (field && field.dataset.type === "timestamp") {
       obj[rawKey] = new Date().toISOString();
       continue;
     }
-	
+
     const key = rawKey.endsWith("[]") ? rawKey.slice(0, -2) : rawKey;
     const isArrayField =
       rawKey.endsWith("[]") ||
       (field && field.type === "checkbox") ||
       (field && field.multiple);
 
-     if (field && field.hasAttribute("data-required")) {
-      const isEmpty = 
+    if (field && field.hasAttribute("data-required")) {
+      const isEmpty =
         (field.type === "checkbox" && !field.checked) ||
         (field.type === "radio" && !form.querySelector(`[name="${rawKey}"]:checked`)) ||
-        (!field.type && !value) || 
         (value === "" || value === null);
       if (isEmpty) {
-        throw new Error(`${key} wajib di isi`);
+        const err = new Error(`${key} wajib di isi`);
+        err.field = key;
+        err.code = "REQUIRED_FIELD_EMPTY";
+        throw err;
       }
     }
-      
+
     if (field && field.tagName === "SELECT" && field.multiple) {
       obj[key] = Array.from(field.selectedOptions).map(opt => opt.value);
       continue;
     }
-
-    
 
     if (!(key in obj)) {
       obj[key] = isArrayField ? [value] : value;
@@ -206,11 +207,11 @@ function getDataForm(form) {
       obj[key] = [obj[key], value];
     }
 
-    if (field && field.tagName !== "INPUT" || field.type !== "hidden") {
+    if (field && !(field.tagName === "INPUT" && field.type === "hidden")) {
       field.value = "";
-    }    
+    }
   }
-  
+
   const checkboxNames = new Set(
     Array.from(form.querySelectorAll('input[type="checkbox"][name]'))
       .filter(el => !el.hasAttribute("data-ignore"))
@@ -219,15 +220,17 @@ function getDataForm(form) {
   checkboxNames.forEach(name => {
     if (!(name in obj)) obj[name] = [];
   });
-  
+
   form.querySelectorAll("[name][data-default]").forEach(el => {
     const key = el.name.endsWith("[]") ? el.name.slice(0, -2) : el.name;
     if (!obj[key] || obj[key].length === 0) {
       obj[key] = el.getAttribute("data-default");
     }
   });
+
   return obj;
 }
+
 
 function notifySuccess(message, redirectTo = null) {
   _dekeku.function.showAlert(message, 'success');
