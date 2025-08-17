@@ -23,6 +23,7 @@ export async function handleGithubPostFormSubmit(form) {
     const resJson = await res.json();
 
     if (res.ok) {
+      _dekeku.function.showAlert("Data Berhasil Dikirim", "success");
       let file = _dekeku.daftarJson.filter(item => item.file === fileKey)[0];
       let setItem = _dekeku.function.setDataJson(file,resJson.data);
         if (setItem){
@@ -31,7 +32,6 @@ export async function handleGithubPostFormSubmit(form) {
       if (form.dataset.dekeku_proxy){
         _dekeku.proxy[file.nama].value = true
       };
-      _dekeku.function.showAlert("Data Berhasil Dikirim", "success");
     } else {
       _dekeku.function.showAlert(resJson.message || "Gagal mengirim data", "error");
     }
@@ -55,7 +55,7 @@ export async function handleGithubUpdateFormSubmit(form) {
         return _dekeku.function.showAlert(err.message, "error");
       }
     }
-    
+
     _dekeku.function.showAlert("Mengirim data", "info");
     const res = await fetch(`${_dekeku.urlApi}/gh/data?action=update`,{
         method: "POST",
@@ -65,6 +65,7 @@ export async function handleGithubUpdateFormSubmit(form) {
 
     const resJson = await res.json();
     if (res.ok) {
+      _dekeku.function.showAlert("Data Berhasil Dikirim", "success");
       let file = _dekeku.daftarJson.filter(item => item.file === fileKey)[0];
       let setItem = _dekeku.function.setDataJson(file,resJson.data);
       if (setItem){
@@ -73,7 +74,6 @@ export async function handleGithubUpdateFormSubmit(form) {
       if (form.dataset.dekeku_proxy){
         _dekeku.proxy[file.nama].value = true
       };
-      _dekeku.function.showAlert("Data Berhasil Dikirim", "success");
     } else {
       _dekeku.function.showAlert(resJson.message || "Gagal mengirim data", "error");
     }
