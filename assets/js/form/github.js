@@ -6,7 +6,7 @@ export async function handleGithubPostFormSubmit(form) {
     if (!fileKey) return _dekeku.function.showAlert("Data-file tidak ditemukan", "error");
 	let data;
 try{
-const data = getDataForm(form);
+data = getDataForm(form);
 }catch (err){
 if (err.message){
 return _dekeku.function.showAlert(err.message, "error");	
@@ -48,7 +48,7 @@ export async function handleGithubUpdateFormSubmit(form) {
 	const query = JSON.parse(fileFilter);
     let data;
 try{
-const data = getDataForm(form);
+data = getDataForm(form);
 }catch (err){
 if (err.message){
 return _dekeku.function.showAlert(err.message, "error");	
@@ -226,7 +226,6 @@ function getDataForm(form) {
       obj[key] = el.getAttribute("data-default");
     }
   });
-  console.log("obj data: ",obj);
   return obj;
 }
 
