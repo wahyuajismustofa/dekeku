@@ -1,5 +1,5 @@
 // assets/js/dekeku.js
-// Last Update 18/08/2025 21:00 WIB
+// Last Update 18/08/2025 02:42 WIB
 // ========== Import ==========
 import { hideLoader, initConfig, gtag } from "./core/dekeku.js";
 import { loadAllData, setDataJson } from "./data/fetch.js";
@@ -39,10 +39,7 @@ async function init() {
     _dekeku.devMode = isDev;
     _dekeku.urlApi = urlApi;
     _dekeku.daftarJson = _dekeku.daftarJson || [];
-    _dekeku.proxy = {};
-    _dekeku.proxy.loadFile = makeFlagProxy(loadAllData);
-    _dekeku.proxy.saveDekeku = makeFlagProxy(saveDekeku);
-    _dekeku.proxy.saveDekeku.value = true;    
+    _dekeku.proxy = {};   
   }
     
   for (const [key, fn] of Object.entries(dekekuFunction)) {
@@ -51,6 +48,9 @@ async function init() {
       _dekeku.function[key] = fn;
     }
   }
+  _dekeku.proxy.loadFile = makeFlagProxy(loadAllData);
+  _dekeku.proxy.saveDekeku = makeFlagProxy(saveDekeku);
+  _dekeku.proxy.saveDekeku.value = true;   
   console.log(_dekeku.devMode ? "Huff.. 🛠️" : "Yatta!..🚀");
 }
 
