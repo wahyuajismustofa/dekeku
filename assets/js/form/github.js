@@ -226,7 +226,7 @@ function getDataForm(form) {
       obj[key] = el.getAttribute("data-default");
     }
   });
-
+  console.log("obj data: ",obj);
   return obj;
 }
 
