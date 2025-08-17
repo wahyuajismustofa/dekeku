@@ -192,6 +192,7 @@ export function getDekeku () {
   return getJsonFromSession("_dekeku");
 }
 export function saveDekeku () {
+  _dekeku.prosesJs = 0;
   return saveJsonToSession("_dekeku",_dekeku);
 }
 export function pushUniqueObj(arr, key, ...items) {
