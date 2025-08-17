@@ -59,6 +59,7 @@ export async function handleGithubUpdateFormSubmit(form) {
 
     _dekeku.function.showAlert("Mengirim data", "info");
     console.log("Data: ", data);
+    console.log("Query: ", query);
     const res = await fetch(`${_dekeku.urlApi}/gh/data?action=update`,{
         method: "POST",
         headers: { "Content-Type": "application/json" },
