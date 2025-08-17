@@ -40,6 +40,7 @@ async function init() {
     _dekeku.urlApi = urlApi;
     _dekeku.daftarJson = _dekeku.daftarJson || [];
     _dekeku.proxy = {};   
+    _dekeku.prosesJs = 0;
   }
     
   for (const [key, fn] of Object.entries(dekekuFunction)) {
@@ -74,7 +75,7 @@ function selesai() {
 
 
 function initDekeku() {
-  defineOrIncrement(_dekeku, "prosesJs", 1);
+  _dekeku.prosesJs += 1;
   gtag();
   bindDataAttributes();
   observerDataAttributes();  
