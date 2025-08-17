@@ -1,18 +1,19 @@
 import { enrichWithLookups, filterData } from "./utils/jsonHandler.js";
 import { wrapElement, getUniqueId } from "./dom/utils.js";
 import { showBuyModal } from "./dom/modal.js";
-import dekeku, { dekekuFunction as _dF } from "./dekeku.js";
+import { dekekuFunction as _dF } from "./dekeku.js";
 // ================== DATA PRODUK ==================
 const file = {file:"produk", nama: "produk"};
+const _dekeku = window._dekeku;
 _dF.waitForCondition(
-  () => typeof dekeku !== "undefined" && dekeku.ready === true,
+  () => typeof _dekeku !== "undefined" && _dekeku.ready === true,
   async () => {
-    dekeku.prosesJs += 1;
-    _dF.pushUniqueObj(dekeku.daftarJson,"nama",file);
-    await _dF.loadAllData(dekeku);
+    _dekeku.prosesJs += 1;
+    _dF.pushUniqueObj(_dekeku.daftarJson,"nama",file);
+    await _dF.loadAllData();
     await renderProdukdanFilter();
-    dekeku.prosesJs -= 1;
-    _dF.saveDekeku();
+    _dekeku.prosesJs -= 1;
+    _dekeku.proxy.saveDekeku.value = true;
   },
   {
     timeout: 5000,
@@ -41,9 +42,9 @@ async function renderProdukdanFilter(){
 }
 
 async function getDataProduk() {
-  dataProduk = dekeku.dataJson[file.nama].produk;
-  dataKategori = dekeku.dataJson[file.nama].kategori;
-  dataPaket = dekeku.dataJson[file.nama].paket;
+  dataProduk = _dekeku.dataJson[file.nama].produk;
+  dataKategori = _dekeku.dataJson[file.nama].kategori;
+  dataPaket = _dekeku.dataJson[file.nama].paket;
   dataProduk = enrichWithLookups(dataProduk, { kategori: dataKategori, paket: dataPaket });
 }
 
@@ -83,7 +84,6 @@ function renderFilters(data, keys) {
       }
     }
 
-    // Lewati jika key tidak ada dalam data yang telah difilter
     if (!filteredData.some(item => key in item)) return;
 
     const id = `filter-${key}`;
@@ -118,11 +118,9 @@ function renderFilters(data, keys) {
       if (filters[key] === value) option.selected = true;
       selectEl.appendChild(option);
     });
-
-    // Event listener untuk update filters dan render ulang
+    
     selectEl.addEventListener('change', () => {
       filters[key] = selectEl.value;
-      // Reset semua filter di bawahnya
       for (let i = index + 1; i < keys.length; i++) {
         delete filters[keys[i]];
       }

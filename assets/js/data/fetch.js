@@ -1,13 +1,13 @@
 import { isNonEmptyObject } from "../utils/jsonHandler.js";
 import sift from "https://cdn.jsdelivr.net/npm/sift@16.0.0/es/index.min.js";
 
-export async function fetchDataJson(file, repo) {
-  const { username, repo: repoName } = repo;
+export async function fetchDataJson(file, repos) {
+  const { username, repo } = repos;
   const infoFile = file.file.split(".");
   const fileName = infoFile.shift();
   const path = infoFile;
   console.log("Dekeku Memuat: ", file.nama);
-  const url = `https://raw.githubusercontent.com/${username}/${repoName}/refs/heads/main/assets/data/${fileName}.json?t=${Date.now()}`;
+  const url = `https://raw.githubusercontent.com/${username}/${repo}/refs/heads/main/assets/data/${fileName}.json?t=${Date.now()}`;
 
   try {
   const response = await fetch(url);
@@ -63,16 +63,16 @@ export async function fetchDataJsonAPI(file, urlApi) {
   }
 }
 
-export async function loadAllData(dekeku, force = false) {
-  dekeku.dataJson = dekeku.dataJson || {};
-  for (const file of dekeku.daftarJson) {
-    if (!force && dekeku.dataJson[file.nama]) {
+export async function loadAllData( force = false) {
+ _dekeku.dataJson = _dekeku.dataJson || {};
+  for (const file of _dekeku.daftarJson) {
+    if (!force &&_dekeku.dataJson[file.nama]) {
       continue;
     }
 
     try {
-      const data = await fetchDataJson(file, dekeku.repo);
-      dekeku.dataJson[file.nama] = data;
+      const data = await fetchDataJson(file,_dekeku.repo);
+      _dekeku.dataJson[file.nama] = data;
     } catch (err) {
       console.error(`Error memuat ${file}:`, err);
     }

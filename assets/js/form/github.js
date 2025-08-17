@@ -27,7 +27,7 @@ export async function handleGithubPostFormSubmit(form) {
       let file = _dekeku.daftarJson.filter(item => item.file === fileKey)[0];
       let setItem = _dekeku.function.setDataJson(file,resJson.data);
         if (setItem){
-          _dekeku.function.saveDekeku();
+          _dekeku.proxy.saveDekeku.value = true;
         }
       if (form.dataset.dekeku_proxy){
         _dekeku.proxy[file.nama].value = true
@@ -69,7 +69,7 @@ export async function handleGithubUpdateFormSubmit(form) {
       let file = _dekeku.daftarJson.filter(item => item.file === fileKey)[0];
       let setItem = _dekeku.function.setDataJson(file,resJson.data);
       if (setItem){
-        _dekeku.function.saveDekeku();
+        _dekeku.proxy.saveDekeku.value = true;
       }
       if (form.dataset.dekeku_proxy){
         _dekeku.proxy[file.nama].value = true

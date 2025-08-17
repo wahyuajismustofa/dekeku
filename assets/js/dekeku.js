@@ -1,11 +1,11 @@
 // assets/js/dekeku.js
-// Last Update 17/08/2025 21:00 WIB
+// Last Update 18/08/2025 21:00 WIB
 // ========== Import ==========
 import { hideLoader, initConfig, gtag } from "./core/dekeku.js";
 import { loadAllData, setDataJson } from "./data/fetch.js";
 import { bindDataAttributes, observerDataAttributes } from "./dom/dataBinding.js";
 import { getEnvironment } from "./utils/dekeku.js";
-import { showAlert,defineOrIncrement, waitForCondition, getDekekuFromSession, saveDekekuToSession, pushUniqueObj } from "./utils/utils.js";
+import { showAlert,defineOrIncrement, waitForCondition, getDekeku, saveDekeku, pushUniqueObj, makeFlagProxy } from "./utils/utils.js";
 import { writeURLParams, readURLParams } from "./utils/urlParams.js";
 
 // ========== Global Context ==========
@@ -16,25 +16,33 @@ export default _dekeku;
 export const dekekuFunction = {
   waitForCondition,
   loadAllData,
-  saveDekeku: saveDekekuToSession,
   pushUniqueObj,
   writeURLParams,
   readURLParams,
   setDataJson,
-  showAlert
+  showAlert,
+  makeFlagProxy,
+  initDekeku
 };
 
 // ========== Inisialisasi ==========
-async function initDekeku() {
-  const cachedDekeku = getDekekuFromSession();
+async function init() {
+  const cachedDekeku = getDekeku();
 
   if (cachedDekeku) {
+    console.log("Memuat dekeku dari cache");
     Object.assign(_dekeku, cachedDekeku);
   } else {
+    console.log("Memuat dekeku dari server");
     _dekeku.repo = await initConfig();
     const { isDev, urlApi } = getEnvironment();
     _dekeku.devMode = isDev;
     _dekeku.urlApi = urlApi;
+    _dekeku.daftarJson = _dekeku.daftarJson || [];
+    _dekeku.proxy = {};
+    _dekeku.proxy.loadFile = makeFlagProxy(loadAllData);
+    _dekeku.proxy.saveDekeku = makeFlagProxy(saveDekeku);
+    _dekeku.proxy.saveDekeku.value = true;    
   }
     
   for (const [key, fn] of Object.entries(dekekuFunction)) {
@@ -44,9 +52,6 @@ async function initDekeku() {
     }
   }
   console.log(_dekeku.devMode ? "Huff.. 🛠️" : "Yatta!..🚀");
-  _dekeku.daftarJson = _dekeku.daftarJson || [];
-
-  saveDekekuToSession();
 }
 
 
@@ -67,14 +72,19 @@ function selesai() {
   );
 }
 
-// ========== Event ==========
-document.addEventListener("DOMContentLoaded", async () => {
-  await initDekeku();
+
+function initDekeku() {
   defineOrIncrement(_dekeku, "prosesJs", 1);
-  gtag(_dekeku.repo.googleAnalitik);
+  gtag();
   bindDataAttributes();
-  observerDataAttributes();
-  _dekeku.ready = true;
+  observerDataAttributes();  
   _dekeku.prosesJs -= 1;
   selesai();
+}
+
+// ========== Event ==========
+document.addEventListener("DOMContentLoaded", async () => {
+  await init();
+  _dekeku.ready = true;
+
 });

@@ -188,10 +188,10 @@ export function saveJsonToSession (key, value) {
     console.error(`Gagal simpan data untuk key "${key}":`, error);
   }
 }
-export function getDekekuFromSession () {
+export function getDekeku () {
   return getJsonFromSession("_dekeku");
 }
-export function saveDekekuToSession () {
+export function saveDekeku () {
   return saveJsonToSession("_dekeku",_dekeku);
 }
 export function pushUniqueObj(arr, key, ...items) {
@@ -200,4 +200,20 @@ export function pushUniqueObj(arr, key, ...items) {
       arr.push(item);
     }
   }
+}
+export function makeFlagProxy(callback, ...params) {
+  return new Proxy({ value: false }, {
+    set(target, prop, val) {
+      if (prop === "value" && val === true) {
+        callback(...params);
+        target[prop] = false;
+        return true;
+      }
+      target[prop] = val;
+      return true;
+    },
+    get(target, prop) {
+      return target[prop];
+    }
+  });
 }
