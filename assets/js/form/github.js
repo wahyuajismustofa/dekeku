@@ -162,6 +162,38 @@ export async function handleMasukFormSubmit(form) {
   }
 }
 
+function validateRequiredField(form, field, rawKey, value) {
+  if (!field || !field.hasAttribute("data-required")) return;
+
+  let isEmpty = false;
+
+  if (field.type === "checkbox") {
+    isEmpty = !field.checked;
+  } else if (field.type === "radio") {
+    const checked = form.querySelector(`[name="${rawKey}"]:checked`);
+    isEmpty = !checked;
+  } else {
+    isEmpty = (value === "" || value === null);
+  }
+
+  if (isEmpty) {
+    const err = new Error(`${rawKey} wajib diisi`);
+    err.field = rawKey;
+    err.code = "REQUIRED_FIELD_EMPTY";
+    throw err;
+  }
+}
+
+function resetFieldValue(field) {
+  if (field && !(field.tagName === "INPUT" && field.type === "hidden")) {
+    field.value = "";
+  }
+}
+
+function normalizeKey(rawKey) {
+  return rawKey.endsWith("[]") ? rawKey.slice(0, -2) : rawKey;
+}
+
 function getDataForm(form) {
   const fd = new FormData(form);
   const obj = {};
@@ -175,24 +207,13 @@ function getDataForm(form) {
       continue;
     }
 
-    const key = rawKey.endsWith("[]") ? rawKey.slice(0, -2) : rawKey;
+    const key = normalizeKey(rawKey);
     const isArrayField =
       rawKey.endsWith("[]") ||
       (field && field.type === "checkbox") ||
       (field && field.multiple);
 
-    if (field && field.hasAttribute("data-required")) {
-      const isEmpty =
-        (field.type === "checkbox" && !field.checked) ||
-        (field.type === "radio" && !form.querySelector(`[name="${rawKey}"]:checked`)) ||
-        (value === "" || value === null);
-      if (isEmpty) {
-        const err = new Error(`${key} wajib di isi`);
-        err.field = key;
-        err.code = "REQUIRED_FIELD_EMPTY";
-        throw err;
-      }
-    }
+    validateRequiredField(form, field, rawKey, value);
 
     if (field && field.tagName === "SELECT" && field.multiple) {
       obj[key] = Array.from(field.selectedOptions).map(opt => opt.value);
@@ -207,22 +228,27 @@ function getDataForm(form) {
       obj[key] = [obj[key], value];
     }
 
-    if (field && !(field.tagName === "INPUT" && field.type === "hidden")) {
-      field.value = "";
-    }
+    resetFieldValue(field);
   }
+
+  form.querySelectorAll("[name][data-required]").forEach(el => {
+    const key = normalizeKey(el.name);
+    if (!(key in obj)) {
+      validateRequiredField(form, el, key, null);
+    }
+  });
 
   const checkboxNames = new Set(
     Array.from(form.querySelectorAll('input[type="checkbox"][name]'))
       .filter(el => !el.hasAttribute("data-ignore"))
-      .map(el => el.name.endsWith("[]") ? el.name.slice(0, -2) : el.name)
+      .map(el => normalizeKey(el.name))
   );
   checkboxNames.forEach(name => {
     if (!(name in obj)) obj[name] = [];
   });
 
   form.querySelectorAll("[name][data-default]").forEach(el => {
-    const key = el.name.endsWith("[]") ? el.name.slice(0, -2) : el.name;
+    const key = normalizeKey(el.name);
     if (!obj[key] || obj[key].length === 0) {
       obj[key] = el.getAttribute("data-default");
     }
@@ -230,6 +256,7 @@ function getDataForm(form) {
 
   return obj;
 }
+
 
 
 function notifySuccess(message, redirectTo = null) {

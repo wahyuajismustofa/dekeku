@@ -1,5 +1,5 @@
 // assets/js/dekeku.js
-// Last Update 17/08/2025 20:10 WIB
+// Last Update 17/08/2025 20:27 WIB
 // ========== Import ==========
 import { hideLoader, initConfig, gtag } from "./core/dekeku.js";
 import { loadAllData, setDataJson } from "./data/fetch.js";
