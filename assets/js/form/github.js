@@ -5,14 +5,15 @@ export async function handleGithubPostFormSubmit(form) {
     const fileKey = form.dataset.file;
     if (!fileKey) return _dekeku.function.showAlert("Data-file tidak ditemukan", "error");
 	let data;
-try{
-data = getDataForm(form);
-}catch (err){
-if (err.message){
-return _dekeku.function.showAlert(err.message, "error");	
-}
-}
-
+  try{
+    data = getDataForm(form);
+  }catch (err){
+    if (err.message){
+      return _dekeku.function.showAlert(err.message, "error");
+    }
+  }
+  
+  _dekeku.function.showAlert("Mengirim data", "info");
     const res = await fetch(`${_dekeku.urlApi}/gh/data?action=post`,{
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -47,16 +48,15 @@ export async function handleGithubUpdateFormSubmit(form) {
     if (!fileFilter) return _dekeku.function.showAlert("data-filter belum di setting", "error");
 	const query = JSON.parse(fileFilter);
     let data;
-try{
-data = getDataForm(form);
-}catch (err){
-if (err.message){
-return _dekeku.function.showAlert(err.message, "error");	
-}
-}
-
-
-
+    try{
+      data = getDataForm(form);
+    }catch (err){
+      if (err.message){
+        return _dekeku.function.showAlert(err.message, "error");
+      }
+    }
+    
+    _dekeku.function.showAlert("Mengirim data", "info");
     const res = await fetch(`${_dekeku.urlApi}/gh/data?action=update`,{
         method: "POST",
         headers: { "Content-Type": "application/json" },
