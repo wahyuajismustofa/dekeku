@@ -1,4 +1,4 @@
-import { handleWhatsAppFormSubmit } from "../form/whatsapp.js";
+import { handleWhatsAppFormSubmit, handleCustomWhatsAppFormSubmit } from "../form/whatsapp.js";
 import {
   handleGithubPostFormSubmit,
   handleDaftarFormSubmit,
@@ -11,6 +11,7 @@ const FORM_HANDLERS = {
   "github-post": handleGithubPostFormSubmit,
   "github-update": handleGithubUpdateFormSubmit,
   "whatsapp": handleWhatsAppFormSubmit,
+  "custom-whatsapp": handleCustomWhatsAppFormSubmit,
   "daftar": handleDaftarFormSubmit,
   "masuk": handleMasukFormSubmit,
 };
