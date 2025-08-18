@@ -22,7 +22,8 @@ export const dekekuFunction = {
   setDataJson,
   showAlert,
   makeFlagProxy,
-  initDekeku
+  initDekeku,
+  waitUntilTrue
 };
 
 // ========== Inisialisasi ==========
@@ -92,3 +93,17 @@ document.addEventListener("DOMContentLoaded", async () => {
   _dekeku.ready = true;
 
 });
+function waitUntilTrue(variable, interval = 100) {
+    return new Promise(resolve => {
+        const timer = setInterval(() => {
+            try {
+                if (variable) {
+                    clearInterval(timer);
+                    resolve();
+                }
+            } catch (e) {
+                console.error("Error saat mengecek kondisi:", e);
+            }
+        }, interval);
+    });
+}

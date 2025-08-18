@@ -65,6 +65,7 @@ export async function fetchDataJsonAPI(file, urlApi) {
 
 export async function loadAllData( force = false) {
  _dekeku.dataJson = _dekeku.dataJson || {};
+ _dekeku.dataJson.ready = false;
   for (const file of _dekeku.daftarJson) {
     if (!force &&_dekeku.dataJson[file.nama]) {
       continue;
@@ -77,6 +78,7 @@ export async function loadAllData( force = false) {
       console.error(`Error memuat ${file}:`, err);
     }
   }
+  _dekeku.dataJson.ready = true;
 }
 
 export function setDataJson(file, data) {
