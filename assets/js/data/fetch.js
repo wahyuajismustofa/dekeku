@@ -1,7 +1,13 @@
 import { isNonEmptyObject } from "../utils/jsonHandler.js";
 import sift from "https://cdn.jsdelivr.net/npm/sift@16.0.0/es/index.min.js";
 
-export async function fetchDataJson(file, repos) {
+export async function fetchDataJson(file) {
+  let repos = {};
+  if (file.repo){
+    repos = file.repo;
+  }else{
+    repos = _dekeku.repo;
+  }
   const { username, repo } = repos;
   const infoFile = file.file.split(".");
   const fileName = infoFile.shift();
@@ -72,7 +78,7 @@ export async function loadAllData( force = false) {
     }
 
     try {
-      const data = await fetchDataJson(file,_dekeku.repo);
+      const data = await fetchDataJson(file);
       _dekeku.dataJson[file.nama] = data;
     } catch (err) {
       console.error(`Error memuat ${file}:`, err);

@@ -23,7 +23,8 @@ export const dekekuFunction = {
   showAlert,
   makeFlagProxy,
   initDekeku,
-  waitUntilTrue
+  waitUntilTrue,
+  updateDataAtt
 };
 
 // ========== Inisialisasi ==========
@@ -105,5 +106,32 @@ function waitUntilTrue(variable, interval = 100) {
                 console.error("Error saat mengecek kondisi:", e);
             }
         }, interval);
+    });
+}
+function updateDataAtt(attrName, dataObj) {
+    const elements = document.querySelectorAll(`[data-${attrName}]`);
+
+    elements.forEach(el => {
+        let currentData = {};
+        try {
+            currentData = JSON.parse(el.getAttribute(`data-${attrName}`) || "{}");
+        } catch (e) {
+            console.warn(`Gagal parsing data-${attrName}:`, e);
+        }
+        
+        for (const key in currentData) {
+            const attr = currentData[key];
+            if (dataObj.hasOwnProperty(key)) {
+                const value = dataObj[key];
+                
+                if (attr in el) {
+                    el[attr] = value;
+                } else {
+                    el.setAttribute(attr, value);
+                }
+            }
+        }
+        
+        el.removeAttribute(`data-${attrName}`);
     });
 }
