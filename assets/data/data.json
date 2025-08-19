@@ -11,6 +11,7 @@
   "seller": [
     {
       "id": 1,
+      "slug": "dekeku",
       "pemilik": "Wahyu Ajis Mustofa",
       "nama": "Dekeku",
       "kontak": 6285161517176,
@@ -26,6 +27,7 @@
     },
     {
       "id": 2,
+      "slug": "artoprinting",
       "pemilik": "Miftahul",
       "nama": "Arto Printing",
       "kontak": 6285712110870,
