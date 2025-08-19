@@ -90,7 +90,7 @@ export function showBuyModalWhatsApp(produk,kontak) {
 
   const footerHTML = `
     <button class="btn btn-primary text-danger" data-dismiss="modal" type="button">Batal</button>
-    <button class="btn btn-sm btn-success ml-auto" id="${submitBtnId}" type="button">
+    <button class="btn btn-sm btn-primary ml-auto" id="${submitBtnId}" type="button">
       <span class="mr-1"><i class="fab fa-whatsapp"></i></span>
       Pesan via WhatsApp
     </button>
