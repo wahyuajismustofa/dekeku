@@ -115,15 +115,15 @@ export function showBuyModalWhatsApp(produk,kontak) {
 
         // Susun pesan WhatsApp
         const pesan = `
-        Halo, saya ingin memesan produk berikut:
+Halo, saya ingin memesan produk berikut:
 
-        Produk: ${produk.nama}
-        Acara: ${produk.acara || "-"}
-        Tema: ${produk.tema || "-"}
-        Paket: ${paketDipilih.nama}
-        Harga: Rp${paketDipilih.harga.toLocaleString('id-ID')}
+Produk: ${produk.nama}
+Acara: ${produk.acara || "-"}
+Tema: ${produk.tema || "-"}
+Paket: ${paketDipilih.nama}
+Harga: Rp${paketDipilih.harga.toLocaleString('id-ID')}
 
-        Link Produk: ${produk.link_produk || window.location.href}
+Link Produk: ${produk.link_produk || window.location.href}
         `.trim();
 
         const nomorWA = kontak;
