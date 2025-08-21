@@ -84,25 +84,27 @@ export function bindDataAttributes(context = document) {
   });
 }
 
+
 export function bindDataEventAttributes(context = document) {
-  Object.keys(EVENT_HANDLERS).forEach(eventName => {
-    const selector = `[data-event-${eventName}]:not([data-event-${eventName}-bound])`;
-    context.querySelectorAll(selector).forEach(el => {
-      const value = el.dataset[`event${eventName.charAt(0).toUpperCase() + eventName.slice(1)}`] || el.dataset[`event-${eventName}`];
-      const handler = EVENT_HANDLERS[eventName]?.[value];
-      if (typeof handler === "function") {
-        try {
-          el.addEventListener(eventName, e => handler(el, e));
-          el.setAttribute(`data-event-${eventName}-bound`, "true");
-        } catch (err) {
-          console.error(`Error memproses data-event-${eventName}="${value}" pada elemen:`, el, err);
-        }
-      } else {
-        console.warn(`Handler tidak ditemukan untuk data-event-${eventName}="${value}"`);
-      }
+    Object.keys(EVENT_HANDLERS).forEach(eventName => {
+        const selector = `[data-event-${eventName}]:not([data-event-${eventName}-bound])`;
+        context.querySelectorAll(selector).forEach(el => {
+            const value = el.dataset[`event-${eventName}`];
+            const handler = EVENT_HANDLERS[eventName]?.[value];
+            if (typeof handler === "function") {
+                try {
+                    el.addEventListener(eventName, e => handler(el, e));
+                    el.setAttribute(`data-event-${eventName}-bound`, "true"); // <- ini yang menandai bound
+                } catch (err) {
+                    console.error(`Error memproses data-event-${eventName}="${value}" pada elemen:`, el, err);
+                }
+            } else {
+                console.warn(`Handler tidak ditemukan untuk data-event-${eventName}="${value}"`);
+            }
+        });
     });
-  });
 }
+
 
 export function observerDataAttributes() {
   const observer = new MutationObserver(mutations => {
