@@ -32,19 +32,17 @@ ${pengundang}
 `.trim()
 };
 
-export async function buttonWhatsAppUndangan(button){
-	button.addEventListener("click", () => {
-	  const namaTamu = button.dataset.nama || "Tamu";
-	  const link = button.dataset.link || "#";
-	  const pengundang = button.dataset.pengundang;
-	  const jenisAcara = button.dataset.acara || "pernikahan";
+export function buttonWhatsAppUndangan(button, event) {
+  const namaTamu = button.dataset.nama || "Tamu";
+  const link = button.dataset.link || "#";
+  const pengundang = button.dataset.pengundang;
+  const jenisAcara = button.dataset.acara || "pernikahan";
 
-	  const templateFn = whatsappTemplate[jenisAcara] || whatsappTemplate.pernikahan;
-	  const pesan = templateFn({ namaTamu, link, pengundang });
+  const templateFn = whatsappTemplate[jenisAcara] || whatsappTemplate.pernikahan;
+  const pesan = templateFn({ namaTamu, link, pengundang });
 
-	  const waNumber = button.dataset.kontak || "";
-	  const waURL = `https://wa.me/${waNumber}?text=${encodeURIComponent(pesan)}`;
+  const waNumber = button.dataset.kontak || "";
+  const waURL = `https://wa.me/${waNumber}?text=${encodeURIComponent(pesan)}`;
 
-	  window.open(waURL, "_blank");
-	});	
+  window.open(waURL, "_blank");
 }
