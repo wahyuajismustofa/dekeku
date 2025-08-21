@@ -87,19 +87,19 @@ export function bindDataAttributes(context = document) {
 
 export function bindDataEventAttributes(context = document) {
     Object.keys(EVENT_HANDLERS).forEach(eventName => {
-        const selector = `[data-event-${eventName}]:not([data-event-${eventName}-bound])`;
+        const selector = `[data-event_${eventName}]:not([data-event_${eventName}-bound])`;
         context.querySelectorAll(selector).forEach(el => {
-            const value = el.dataset[`event-${eventName}`];
+            const value = el.dataset[`event_${eventName}`];
             const handler = EVENT_HANDLERS[eventName]?.[value];
             if (typeof handler === "function") {
                 try {
                     el.addEventListener(eventName, e => handler(el, e));
-                    el.setAttribute(`data-event-${eventName}-bound`, "true"); // <- ini yang menandai bound
+                    el.setAttribute(`data-event_${eventName}-bound`, "true"); // <- ini yang menandai bound
                 } catch (err) {
-                    console.error(`Error memproses data-event-${eventName}="${value}" pada elemen:`, el, err);
+                    console.error(`Error memproses data-event_${eventName}="${value}" pada elemen:`, el, err);
                 }
             } else {
-                console.warn(`Handler tidak ditemukan untuk data-event-${eventName}="${value}"`);
+                console.warn(`Handler tidak ditemukan untuk data-event_${eventName}="${value}"`);
             }
         });
     });
@@ -117,7 +117,7 @@ export function observerDataAttributes() {
             bindDataAttributes(node);
           }
 
-          if (node.matches?.("[data-event-click]")) {
+          if (node.matches?.("[data-event_click]")) {
             bindDataEventAttributes(node.parentElement || node);
           } else if (node.querySelectorAll) {
             bindDataEventAttributes(node);
