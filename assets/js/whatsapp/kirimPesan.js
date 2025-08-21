@@ -34,7 +34,7 @@ ${pengundang}
 
 export async function buttonWhatsAppUndangan(button){
 	button.addEventListener("click", () => {
-	  const namaTamu = button.dataset.namaTamu || "Tamu";
+	  const namaTamu = button.dataset.nama || "Tamu";
 	  const link = button.dataset.link || "#";
 	  const pengundang = button.dataset.pengundang;
 	  const jenisAcara = button.dataset.acara || "pernikahan";
