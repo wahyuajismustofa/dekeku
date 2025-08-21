@@ -1,68 +1,58 @@
-export function localStorageFormHandler(form) {
+// localStorage.js
+export async function localStorageFormHandler(form) {
   if (!form) return;
 
   const storageKey = form.dataset.nama || "tamuUndangan";
   const scema = JSON.parse(form.dataset.scema || "{}");
 
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
+  // Ambil data dari form
+  const formData = {};
+  for (const key in scema) {
+    const type = scema[key];
+    let value = form.elements[key]?.value?.trim();
+    if (!value) {
+      throw new Error(`Field "${key}" harus diisi!`);
+    }
+    formData[key] = type === "array"
+      ? value.split(",").map(v => v.trim()).filter(v => v)
+      : value;
+  }
 
-    const formData = {};
+  // Ambil data lama
+  let data = JSON.parse(localStorage.getItem(storageKey)) || [];
 
+  // Array keys
+  const arrayKeys = Object.keys(scema).filter(k => scema[k] === "array");
+
+  // Cartesian product untuk kombinasi array
+  function cartesian(arrays) {
+    return arrays.reduce((a, b) => a.flatMap(d => b.map(e => [...d, e])), [[]]);
+  }
+
+  const arrayValues = arrayKeys.map(k => formData[k]);
+  const combinations = cartesian(arrayValues);
+
+  combinations.forEach(comb => {
+    const newItem = {};
+    let i = 0;
     for (const key in scema) {
-      const type = scema[key];
-      let value = form.elements[key]?.value?.trim();
-
-      if (!value) {
-        alert(`Field "${key}" harus diisi!`);
-        return;
-      }
-
-      formData[key] = type === "array"
-        ? value.split(",").map(v => v.trim()).filter(v => v)
-        : value;
+      newItem[key] = scema[key] === "array" ? comb[i++] : formData[key];
     }
 
-    let data = JSON.parse(localStorage.getItem(storageKey)) || [];
+    const exists = data.some(d =>
+      Object.keys(scema).every(k => d[k] === newItem[k])
+    );
 
-    const arrayKeys = Object.keys(scema).filter(k => scema[k] === "array");
-
-    function cartesian(arrays) {
-      return arrays.reduce((a, b) => a.flatMap(d => b.map(e => [...d, e])), [[]]);
-    }
-
-    const arrayValues = arrayKeys.map(k => formData[k]);
-    const combinations = cartesian(arrayValues);
-
-    combinations.forEach(comb => {
-      const newItem = {};
-      let i = 0;
-
-      for (const key in scema) {
-        if (scema[key] === "array") {
-          newItem[key] = comb[i++];
-        } else {
-          newItem[key] = formData[key];
-        }
-      }
-
-      const exists = data.some(d =>
-        Object.keys(scema).every(k =>
-          d[k] === newItem[k]
-        )
-      );
-
-      if (!exists) data.push(newItem);
-    });
-
-    localStorage.setItem(storageKey, JSON.stringify(data));
-
-    if (typeof showAlert === "function") {
-      showAlert("Berhasil menambahkan data!", "success");
-    } else {
-      alert("Berhasil menambahkan data!");
-    }
-
-    form.reset();
+    if (!exists) data.push(newItem);
   });
+
+  localStorage.setItem(storageKey, JSON.stringify(data));
+
+  if (typeof showAlert === "function") {
+    showAlert("Berhasil menambahkan data!", "success");
+  } else {
+    alert("Berhasil menambahkan data!");
+  }
+
+  setTimeout(() => form.reset(), 100);
 }
