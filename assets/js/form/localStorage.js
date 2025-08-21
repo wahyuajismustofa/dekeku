@@ -12,7 +12,7 @@ export async function localStorageFormHandler(form) {
     const type = scema[key];
     let value = form.elements[key]?.value?.trim();
     if (!value) {
-      return _dekeku.showAlert(`${key} harus diisi!`,"error");
+      return showAlert(`${key} harus diisi!`,"error");
     }
     formData[key] = type === "array"
       ? value.split(",").map(v => v.trim()).filter(v => v)
