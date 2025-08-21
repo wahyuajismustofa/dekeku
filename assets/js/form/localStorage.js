@@ -4,6 +4,7 @@ export async function localStorageFormHandler(form) {
 
   const storageKey = form.dataset.nama || "tamuUndangan";
   const scema = JSON.parse(form.dataset.scema || "{}");
+  const proxy = form.dataset.dekeku_proxy;
 
   // Ambil data dari form
   const formData = {};
@@ -47,6 +48,9 @@ export async function localStorageFormHandler(form) {
   });
 
   localStorage.setItem(storageKey, JSON.stringify(data));
+  if (proxy){
+	  _dekeku.proxy[proxy].value = true;
+  }
 
   if (typeof showAlert === "function") {
     showAlert("Berhasil menambahkan data!", "success");
