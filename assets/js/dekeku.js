@@ -1,11 +1,11 @@
 // assets/js/dekeku.js
-// Last Update 18/08/2025 03:33 WIB
+// Last Update 21/08/2025 09:03 WIB
 // ========== Import ==========
 import { hideLoader, initConfig, gtag } from "./core/dekeku.js";
 import { loadAllData, setDataJson } from "./data/fetch.js";
 import { bindDataAttributes, observerDataAttributes } from "./dom/dataBinding.js";
 import { getEnvironment } from "./utils/dekeku.js";
-import { showAlert, waitForCondition, getDekeku, saveDekeku, pushUniqueObj, makeFlagProxy } from "./utils/utils.js";
+import { showAlert, waitForCondition, getDekeku, saveDekeku, pushUniqueObj, makeFlagProxy, waitUntilTrue, updateDataAtt } from "./utils/utils.js";
 import { writeURLParams, readURLParams } from "./utils/urlParams.js";
 
 // ========== Global Context ==========
@@ -92,56 +92,3 @@ document.addEventListener("DOMContentLoaded", async () => {
   _dekeku.ready = true;
 
 });
-
-function waitUntilTrue(conditionFn, interval = 100, timeout = 5000) {
-  return new Promise((resolve, reject) => {
-    if (typeof conditionFn !== "function") {
-      return reject(new Error("Parameter harus berupa function yang mengembalikan boolean"));
-    }
-
-    const timer = setInterval(() => {
-      try {
-        if (conditionFn()) {
-          clearInterval(timer);
-          clearTimeout(timeoutTimer);
-          resolve(true);
-        }
-      } catch (e) {
-        console.error("Error saat mengecek kondisi:", e);
-      }
-    }, interval);
-
-    const timeoutTimer = setTimeout(() => {
-      clearInterval(timer);
-      reject(new Error("Timeout: kondisi tidak pernah terpenuhi"));
-    }, timeout);
-  });
-}
-
-function updateDataAtt(attrName, dataObj) {
-    const elements = document.querySelectorAll(`[data-${attrName}]`);
-
-    elements.forEach(el => {
-        let currentData = {};
-        try {
-            currentData = JSON.parse(el.getAttribute(`data-${attrName}`) || "{}");
-        } catch (e) {
-            console.warn(`Gagal parsing data-${attrName}:`, e);
-        }
-        
-        for (const key in currentData) {
-            const attr = currentData[key];
-            if (dataObj.hasOwnProperty(key)) {
-                const value = dataObj[key];
-                
-                if (attr in el) {
-                    el[attr] = value;
-                } else {
-                    el.setAttribute(attr, value);
-                }
-            }
-        }
-        
-        el.removeAttribute(`data-${attrName}`);
-    });
-}

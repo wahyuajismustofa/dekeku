@@ -218,3 +218,56 @@ export function makeFlagProxy(callback, ...params) {
     }
   });
 }
+
+export function waitUntilTrue(conditionFn, interval = 100, timeout = 5000) {
+  return new Promise((resolve, reject) => {
+    if (typeof conditionFn !== "function") {
+      return reject(new Error("Parameter harus berupa function yang mengembalikan boolean"));
+    }
+
+    const timer = setInterval(() => {
+      try {
+        if (conditionFn()) {
+          clearInterval(timer);
+          clearTimeout(timeoutTimer);
+          resolve(true);
+        }
+      } catch (e) {
+        console.error("Error saat mengecek kondisi:", e);
+      }
+    }, interval);
+
+    const timeoutTimer = setTimeout(() => {
+      clearInterval(timer);
+      reject(new Error("Timeout: kondisi tidak pernah terpenuhi"));
+    }, timeout);
+  });
+}
+
+export function updateDataAtt(attrName, dataObj) {
+    const elements = document.querySelectorAll(`[data-${attrName}]`);
+
+    elements.forEach(el => {
+        let currentData = {};
+        try {
+            currentData = JSON.parse(el.getAttribute(`data-${attrName}`) || "{}");
+        } catch (e) {
+            console.warn(`Gagal parsing data-${attrName}:`, e);
+        }
+        
+        for (const key in currentData) {
+            const attr = currentData[key];
+            if (dataObj.hasOwnProperty(key)) {
+                const value = dataObj[key];
+                
+                if (attr in el) {
+                    el[attr] = value;
+                } else {
+                    el.setAttribute(attr, value);
+                }
+            }
+        }
+        
+        el.removeAttribute(`data-${attrName}`);
+    });
+}

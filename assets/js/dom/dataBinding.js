@@ -1,4 +1,5 @@
 import { handleWhatsAppFormSubmit, handleCustomWhatsAppFormSubmit } from "../form/whatsapp.js";
+import { localStorageFormHandler } from "../form/localStorage.js";
 import {
   handleGithubPostFormSubmit,
   handleDaftarFormSubmit,
@@ -12,6 +13,7 @@ const FORM_HANDLERS = {
   "github-update": handleGithubUpdateFormSubmit,
   "whatsapp": handleWhatsAppFormSubmit,
   "custom-whatsapp": handleCustomWhatsAppFormSubmit,
+  "localStorage": localStorageFormHandler,
   "daftar": handleDaftarFormSubmit,
   "masuk": handleMasukFormSubmit,
 };
