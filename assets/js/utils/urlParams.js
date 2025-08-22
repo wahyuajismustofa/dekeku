@@ -20,7 +20,7 @@ export function writeURLParams(obj) {
     const jsonString = JSON.stringify(obj);
     const encoded = encodeUrlSafe(jsonString);
 
-    const params = new URLSearchParams();
+    const params = new URLSearchParams(window.location.search);
     params.set("d", encoded);
 
     const newURL = `${window.location.pathname}?${params.toString()}`;
@@ -43,3 +43,57 @@ export function readURLParams() {
     return {};
   }
 }
+
+export function getParam(key) {
+  const params = new URLSearchParams(window.location.search);
+  return params.get(key);
+}
+
+export function setParam(key, value, replace = true) {
+  const url = new URL(window.location.href);
+  url.searchParams.set(key, value);
+
+  if (replace) {
+    history.replaceState(null, "", url.toString());
+  } else {
+    history.pushState(null, "", url.toString());
+  }
+}
+
+
+export function setParams(obj, replace = true) {
+  const url = new URL(window.location.href);
+
+  for (const [key, value] of Object.entries(obj)) {
+    url.searchParams.set(key, value);
+  }
+
+  if (replace) {
+    history.replaceState(null, "", url.toString());
+  } else {
+    history.pushState(null, "", url.toString());
+  }
+}
+
+
+export function deleteParam(key, replace = true) {
+  const url = new URL(window.location.href);
+  url.searchParams.delete(key);
+
+  if (replace) {
+    history.replaceState(null, "", url.toString());
+  } else {
+    history.pushState(null, "", url.toString());
+  }
+
+}
+
+const params = {
+	writeURLParams,
+  readURLParams,
+  getParam,
+  setParam,
+  setParams,
+  deleteParam
+}
+export default params;

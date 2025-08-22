@@ -6,7 +6,7 @@ import { loadAllData, setDataJson } from "./data/fetch.js";
 import { bindDataAttributes, observerDataAttributes } from "./dom/dataBinding.js";
 import { getEnvironment } from "./utils/dekeku.js";
 import { showAlert, waitForCondition, getDekeku, saveDekeku, pushUniqueObj, makeFlagProxy, waitUntilTrue, updateDataAtt, flattenWithPrefix } from "./utils/utils.js";
-import { writeURLParams, readURLParams } from "./utils/urlParams.js";
+import params, { writeURLParams, readURLParams } from "./utils/urlParams.js";
 
 // ========== Global Context ==========
 if (!window._dekeku) window._dekeku = {};
@@ -25,7 +25,8 @@ export const dekekuFunction = {
   initDekeku,
   waitUntilTrue,
   updateDataAtt,
-  flattenWithPrefix
+  flattenWithPrefix,
+  params
 };
 
 // ========== Inisialisasi ==========
