@@ -49,6 +49,16 @@ export function getParam(key) {
   return params.get(key);
 }
 
+export function getParams() {
+  const params = new URLSearchParams(window.location.search);
+  const obj = {};
+  for (const [key, value] of params.entries()) {
+    obj[key] = value;
+  }
+  return obj;
+}
+
+
 export function setParam(key, value, replace = true) {
   const url = new URL(window.location.href);
   url.searchParams.set(key, value);
@@ -90,10 +100,11 @@ export function deleteParam(key, replace = true) {
 
 const params = {
 	writeURLParams,
-  readURLParams,
-  getParam,
-  setParam,
-  setParams,
-  deleteParam
+	readURLParams,
+	getParam,
+	getParams,
+	setParam,
+	setParams,
+	deleteParam
 }
 export default params;
