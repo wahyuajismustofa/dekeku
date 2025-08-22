@@ -272,7 +272,7 @@ export function updateDataAtt(attrName, dataObj) {
     });
 }
 
-function flattenWithPrefix(data,prefix) {
+export function flattenWithPrefix(data,prefix) {
   let newData = { ...data };
   if (data[prefix]) {
     Object.entries(data[prefix]).forEach(([key, value]) => {
