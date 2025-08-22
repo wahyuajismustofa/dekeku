@@ -5,7 +5,7 @@ import { hideLoader, initConfig, gtag } from "./core/dekeku.js";
 import { loadAllData, setDataJson } from "./data/fetch.js";
 import { bindDataAttributes, observerDataAttributes } from "./dom/dataBinding.js";
 import { getEnvironment } from "./utils/dekeku.js";
-import { showAlert, waitForCondition, getDekeku, saveDekeku, pushUniqueObj, makeFlagProxy, waitUntilTrue, updateDataAtt } from "./utils/utils.js";
+import { showAlert, waitForCondition, getDekeku, saveDekeku, pushUniqueObj, makeFlagProxy, waitUntilTrue, updateDataAtt, flattenWithPrefix } from "./utils/utils.js";
 import { writeURLParams, readURLParams } from "./utils/urlParams.js";
 
 // ========== Global Context ==========
@@ -24,7 +24,8 @@ export const dekekuFunction = {
   makeFlagProxy,
   initDekeku,
   waitUntilTrue,
-  updateDataAtt
+  updateDataAtt,
+  flattenWithPrefix
 };
 
 // ========== Inisialisasi ==========

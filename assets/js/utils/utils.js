@@ -271,3 +271,14 @@ export function updateDataAtt(attrName, dataObj) {
         el.removeAttribute(`data-${attrName}`);
     });
 }
+
+function flattenWithPrefix(data,prefix) {
+  let newData = { ...data };
+  if (data[prefix]) {
+    Object.entries(data[prefix]).forEach(([key, value]) => {
+      newData[`${prefix}_${key}`] = value;
+    });
+  }
+
+  return newData;
+}
