@@ -42,6 +42,23 @@
         "facebook": "https://www.facebook.com/tahulmamaz.salachy",
         "instagram": "https://www.instagram.com/artoprinting_pbg/"
       }
+    },
+    {
+      "id": 3,
+      "slug": "desain-se",
+      "pemilik": "Sedya Pangasih",
+      "nama": "Desain_Se",
+      "kontak": 6283844699412,
+      "katalog_page": "/desain-se.html",
+      "home_page": "/desain-se.html",
+      "favicon": "https://ik.imagekit.io/mustofa/web/seller/logo/favicon-desain-se.png",
+      "logo1": "https://ik.imagekit.io/mustofa/web/seller/logo/desain-se.png",
+      "logo2": "https://ik.imagekit.io/mustofa/web/seller/logo/desain-se.png",
+      "sosialMedia": {
+        "whatsApp": "https://wa.me/6283844699412",
+        "facebook": "",
+        "instagram": "https://www.instagram.com/desain_se"
+      }
     }
   ]
 }
