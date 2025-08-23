@@ -9,3 +9,12 @@ export function hideLoader() {
     }, 500);
   }
 }
+
+(function addLoaderIfNotExists() {
+  if (!document.getElementById("loadingScreen")) {
+    const loader = document.createElement("div");
+    loader.id = "loadingScreen";
+    loader.className = "loader";
+    document.body.appendChild(loader);
+  }
+})();
