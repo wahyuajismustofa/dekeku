@@ -282,3 +282,26 @@ export function flattenWithPrefix(data,prefix) {
 
   return newData;
 }
+
+export function insertCommentAtTop(commentText) {
+  // cek apakah komentar sudah ada
+  const existing = Array.from(document.childNodes)
+    .some(node => node.nodeType === 8 && node.nodeValue.trim() === commentText.trim());
+
+  if (existing) return; // kalau sudah ada, stop
+
+  const commentNode = document.createComment(commentText);
+  document.insertBefore(commentNode, document.documentElement);
+}
+
+export function urwah() {
+  const commentText = `
+================================
+Semoga Allah memberikan keberkahan pada usaha dagang ini, melapangkan rezeki, dan menjadikannya jalan kebaikan. Sebagaimana Allah memberkahi perdagangan sahabat-Nya, Urwah Al-Bariqi ra., semoga setiap transaksi yang dilakukan mendatangkan manfaat, keberkahan, dan ridha Allah Ta’ala.
+
+Dibuat oleh: Wahyu Ajis Mustofa
+Brand: Dekeku
+================================
+  `;
+  return insertCommentAtTop(commentText);
+}

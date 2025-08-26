@@ -1,11 +1,11 @@
 // assets/js/dekeku.js
-// Last Update 23/08/2025 22:52 WIB
+// Last Update 27/08/2025 01:08 WIB
 // ========== Import ==========
 import { hideLoader, initConfig, gtag } from "./core/dekeku.js";
 import { loadAllData, setDataJson } from "./data/fetch.js";
 import { bindDataAttributes, observerDataAttributes } from "./dom/dataBinding.js";
 import { getEnvironment } from "./utils/dekeku.js";
-import { showAlert, waitForCondition, getDekeku, saveDekeku, pushUniqueObj, makeFlagProxy, waitUntilTrue, updateDataAtt, flattenWithPrefix } from "./utils/utils.js";
+import { showAlert, waitForCondition, getDekeku, saveDekeku, pushUniqueObj, makeFlagProxy, waitUntilTrue, updateDataAtt, flattenWithPrefix, urwah } from "./utils/utils.js";
 import params, { writeURLParams, readURLParams } from "./utils/urlParams.js";
 
 // ========== Global Context ==========
@@ -31,6 +31,7 @@ export const dekekuFunction = {
 
 // ========== Inisialisasi ==========
 async function init() {
+  urwah();
   const cachedDekeku = getDekeku();
 
   if (cachedDekeku) {
