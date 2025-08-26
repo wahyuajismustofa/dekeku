@@ -1,6 +1,6 @@
 import { handleWhatsAppFormSubmit, handleCustomWhatsAppFormSubmit } from "../form/whatsapp.js";
 import { localStorageFormHandler } from "../form/localStorage.js";
-import { buttonWhatsAppUndangan } from "../whatsapp/kirimPesan.js";
+import { buttonWhatsAppUndangan, handleChatOrder } from "../whatsapp/kirimPesan.js";
 import {
   handleGithubPostFormSubmit,
   handleDaftarFormSubmit,
@@ -22,7 +22,8 @@ const FORM_HANDLERS = {
 
 const EVENT_HANDLERS = {
   click: {
-    "button-whatsapp-undangan": buttonWhatsAppUndangan
+    "button-whatsapp-undangan": buttonWhatsAppUndangan,
+    "button-whatsapp-order": handleChatOrder
   }
 };
 
