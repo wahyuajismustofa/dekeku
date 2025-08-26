@@ -244,7 +244,7 @@ export function waitUntilTrue(conditionFn, interval = 100, timeout = 5000) {
   });
 }
 
-export function updateDataAtt(attrName, dataObj) {
+export async function updateDataAtt(attrName, dataObj) {
     const elements = document.querySelectorAll(`[data-${attrName}]`);
 
     elements.forEach(el => {
