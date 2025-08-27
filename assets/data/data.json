@@ -87,7 +87,7 @@
       "home_page": "/elvan-cell.html",
       "favicon": "https://ik.imagekit.io/mustofa/web/seller/logo/favicon-elvan-cell.png",
       "logo1": "https://ik.imagekit.io/mustofa/web/seller/logo/elvan-cell.svg",
-      "logo2": "https://ik.imagekit.io/mustofa/web/seller/logo/elvan-cell.svg",
+      "logo2": "https://ik.imagekit.io/mustofa/web/seller/logo/elvan-cell-2.svg",
       "sosialMedia": {
         "whatsApp": "https://wa.me/6281225248219",
         "facebook": "",
@@ -104,11 +104,28 @@
       "home_page": "/pinanggih-digital.html",
       "favicon": "https://ik.imagekit.io/mustofa/web/seller/logo/favicon-pinanggih-digital.png",
       "logo1": "https://ik.imagekit.io/mustofa/web/seller/logo/pinanggih-digital.svg",
-      "logo2": "https://ik.imagekit.io/mustofa/web/seller/logo/pinanggih-digital-2.svg",
+      "logo2": "https://ik.imagekit.io/mustofa/web/seller/logo/pinanggih-digital.svg",
       "sosialMedia": {
         "whatsApp": "https://wa.me/6281228474201",
         "facebook": "https://www.facebook.com/faqih.ulinuha.79",
         "instagram": "https://www.instagram.com/faqih_ulinuha"
+      }
+    },
+    {
+      "id": 7,
+      "slug": "calwa-project",
+      "pemilik": "Lilin Calwa",
+      "nama": "Calwa Project",
+      "kontak": 6285728783791,
+      "katalog_page": "/calwa-project.html",
+      "home_page": "/calwa-project.html",
+      "favicon": "https://ik.imagekit.io/mustofa/web/seller/logo/favicon-calwa-project.png",
+      "logo1": "https://ik.imagekit.io/mustofa/web/seller/logo/pinanggih-digital.svg",
+      "logo2": "https://ik.imagekit.io/mustofa/web/seller/logo/calwa-project.svg",
+      "sosialMedia": {
+        "whatsApp": "https://wa.me/6285728783791",
+        "facebook": "",
+        "instagram": ""
       }
     }
   ]
