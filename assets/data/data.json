@@ -161,6 +161,23 @@
         "facebook": "",
         "instagram": ""
       }
+    },
+    {
+      "id": 10,
+      "slug": "corner-copier",
+      "pemilik": "Corner Copier",
+      "nama": "Corner Copier",
+      "kontak": 6281357911066,
+      "katalog_page": "/corner-copier.html",
+      "home_page": "/corner-copier.html",
+      "favicon": "https://ik.imagekit.io/mustofa/web/seller/logo/corner-copier.png",
+      "logo1": "https://ik.imagekit.io/mustofa/web/seller/logo/corner-copier.png",
+      "logo2": "https://ik.imagekit.io/mustofa/web/seller/logo/corner-copier.png",
+      "sosialMedia": {
+        "whatsApp": "https://wa.me/6281357911066",
+        "facebook": "",
+        "instagram": ""
+      }
     }
   ]
 }
